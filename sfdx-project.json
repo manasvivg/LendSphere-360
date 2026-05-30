@@ -1,0 +1,21 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "LendSphere360",
+      "versionName": "Version 1.0",
+      "versionNumber": "1.0.0.NEXT",
+      "versionDescription": "LendSphere 360 - Digital Lending, Servicing & Collections Platform"
+    }
+  ],
+  "name": "LendSphere360",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "59.0",
+  "plugins": {
+    "salesforcedx-vscode-core": {
+      "retrieve-test-code-coverage": true
+    }
+  }
+}

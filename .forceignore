@@ -1,0 +1,47 @@
+# List the files and directories that should be ignored when pushing changes to the org
+# or when retrieving changes from the org.
+
+# LWC configuration files
+**/jsconfig.json
+**/.eslintrc.json
+
+# LWC CSS files (handled by Salesforce)
+# **/lwc/**/*.css
+
+# Debug logs
+**/*.log
+
+# Node artifacts
+node_modules/
+**/.node_modules
+
+# OS artifacts
+.DS_Store
+
+# IDE configuration
+.vscode/
+.idea/
+
+# Test coverage
+**/.nyc_output
+**/coverage
+
+# Temporary files
+**/.tmp
+**/.temp
+
+# Package manager
+package-lock.json
+yarn.lock
+
+# Scratch org snapshots
+.sfdx/
+
+# Docs (not deployable metadata)
+docs/
+screenshots/
+scripts/
+
+# MDAPI retrieved metadata
+**/*.profile
+**/*.profileActionOverride
