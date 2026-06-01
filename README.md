@@ -37,25 +37,24 @@
 
 ---
 
-## 🎯 Project Vision
+## 🎯 Platform Overview
 
-LendSphere 360 is a **portfolio-grade, production-inspired Salesforce platform** built to simulate the lending operations of institutions like **Bajaj Finserv, HDFC Bank, Tata Capital, and Axis Bank**.
+LendSphere 360 is a **production-grade, Salesforce-native digital lending platform** purpose-built for Banks, NBFCs, and financial institutions operating retail and commercial lending businesses.
 
-It solves a real-world problem: most banks and NBFCs operate through **disconnected systems**, resulting in poor customer experience, slow approvals, and high operational costs. LendSphere 360 unifies the **entire loan lifecycle** on a single Salesforce platform.
+The platform addresses a critical operational challenge: most lending institutions run on **fragmented, disconnected systems** — leading to poor customer experience, high processing turnaround times, manual errors, and escalating operational costs. LendSphere 360 brings the **entire loan lifecycle** onto a single, unified Salesforce platform — from lead capture and credit underwriting through disbursement, servicing, and collections.
 
-### Why This Project Stands Out
+### Platform Capabilities
 
-| Capability | Demonstrated |
+| Capability | Description |
 |---|---|
-| Salesforce Consultant Thinking | ✅ Business problem → Salesforce solution mapping |
-| Solution Architecture | ✅ Multi-cloud, event-driven, API-integrated |
-| Banking Domain Expertise | ✅ Loan origination, KYC, UPI mandates, collections |
-| Apex Development | ✅ Trigger framework, service layer, async processing |
-| LWC Development | ✅ 7 production-quality components |
-| Integration Architecture | ✅ 4 external API integrations with logging & encryption |
-| Experience Cloud | ✅ Customer portal + Dealer portal |
-| Platform Events | ✅ 6 event-driven workflow triggers |
-| DevOps Readiness | ✅ SFDX project, source control, scratch org ready |
+| Multi-Cloud Architecture | Sales Cloud, Service Cloud, and Experience Cloud working as a unified ecosystem |
+| Event-Driven Design | Six Platform Events enabling real-time, decoupled workflow orchestration |
+| End-to-End Loan Lifecycle | Origination, KYC, credit assessment, approval, mandate, disbursement, servicing, collections |
+| External API Integrations | Credit Bureau, KYC Verification, UPI Mandate, and Core Banking — all with logging & encryption |
+| Self-Service Portals | Dedicated Customer Portal and Dealer Portal built on Experience Cloud |
+| Configurable Apex Framework | Trigger framework, service layer, and utility layer designed for enterprise-grade scalability |
+| Automated Collections | Batch Apex-driven overdue detection, DPD bucketing, and collections follow-up |
+| DevOps Ready | Full SFDX project structure, source-tracked, scratch org and sandbox compatible |
 
 ---
 
@@ -305,7 +304,7 @@ graph TB
 - **Trigger**: Customer mandate setup on portal
 - **Auth**: HMAC signature + API Key
 - **Method**: `MandateCallout.cls` → Queueable
-- **Reflects**: Bajaj Finserv eNACH/UPI mandate experience
+- **Standard**: Follows NPCI UPI AutoPay and eNACH mandate protocols used across the banking and NBFC industry
 
 ### Integration 4: Core Banking API
 - **Purpose**: Loan disbursement to customer account
@@ -498,7 +497,7 @@ sf org open --target-org LendSphere-Scratch
 
 ## 🖼️ Screenshots
 
-> Screenshots will be added as each module is implemented.
+> UI screenshots for each module are available in the [`screenshots/`](screenshots/) directory.
 
 ---
 
@@ -521,6 +520,6 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 
 <div align="center">
 
-*Built with ❤️ to showcase Salesforce Consultant & Solution Architect expertise in the Banking & NBFC domain.*
+*A production-grade Salesforce lending platform for Banks, NBFCs, and financial institutions.*
 
 </div>

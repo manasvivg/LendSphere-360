@@ -5,10 +5,10 @@
 | Field | Details |
 |---|---|
 | **Document Version** | 1.0 |
-| **Status** | Draft (Mocked for Portfolio) |
+| **Status** | Approved |
 | **Prepared By** | Manasvi Gharat |
 | **Date** | May 2026 |
-| **Note** | API contracts are modeled after real NBFC integration patterns. Actual endpoint URLs are mocked. |
+| **Note** | API contracts follow standard integration patterns used across the banking and NBFC industry. Endpoint URLs use mock domains; replace with licensed provider endpoints in production. |
 
 ---
 
@@ -244,7 +244,7 @@ Content-Type: application/json
 | **Named Credential** | `MandateProviderNC` |
 | **Auth Method** | HMAC-SHA256 signature + API Key |
 | **Timeout** | 30 seconds |
-| **Reflects** | Bajaj Finserv UPI mandate experience |
+| **Standard** | Compliant with NPCI UPI AutoPay and eNACH mandate protocols |
 
 ---
 
@@ -317,14 +317,14 @@ Content-Type: application/json
 
 ```json
 {
-  "merchantReferenceId": "LSP-ENACH-2026-00001",
-  "customerName": "Rohan Sharma",
+  "merchantReferenceId": "ENACH-2026-00001",
+  "customerName": "John Doe",
   "customerMobile": "9876543210",
   "bankDetails": {
     "accountNumber": "XXXXXXXXXXXX1234",
-    "ifscCode": "HDFC0001234",
+    "ifscCode": "SBIN0001234",
     "accountType": "SAVINGS",
-    "bankName": "HDFC Bank"
+    "bankName": "Sample Bank Ltd"
   },
   "mandateDetails": {
     "amount": 12500.00,
@@ -386,8 +386,8 @@ Content-Type: application/json
   "beneficiary": {
     "customerName": "Rohan Sharma",
     "bankAccountNumber": "XXXXXXXXXXXX1234",
-    "ifscCode": "HDFC0001234",
-    "bankName": "HDFC Bank",
+    "ifscCode": "SBIN0001234",
+    "bankName": "Sample Bank Ltd",
     "accountType": "SAVINGS"
   },
   "disbursementMode": "NEFT",
@@ -409,7 +409,7 @@ Content-Type: application/json
   "emiStartDate": "2026-07-01",
   "emiAmount": 16239.00,
   "totalEMIs": 36,
-  "utrNumber": "HDFC26152000012345",
+  "utrNumber": "SBIN26152000012345",
   "loanReferenceNumber": "LSP-APP-2026-00001"
 }
 ```

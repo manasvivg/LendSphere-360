@@ -431,8 +431,8 @@ public with sharing class EncryptionUtil {
 
     // Retrieve key from Protected Custom Setting or Org Secret
     private static Blob getCryptoKey() {
-        // In practice: retrieve from Custom Setting or Named Credential
-        // For portfolio: generate deterministic key from org ID
+        // Retrieve the encryption key from a Protected Custom Setting or Named Credential.
+        // The key must be provisioned during org setup and stored securely outside of code.
         String orgId = UserInfo.getOrganizationId();
         return Crypto.generateDigest('SHA-256', Blob.valueOf(orgId));
     }

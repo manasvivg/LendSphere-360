@@ -26,7 +26,7 @@ This document captures the business requirements, pain points, functional scope,
 
 ### 2.1 Industry Context
 
-Banks and NBFCs in India — including institutions like Bajaj Finserv, HDFC Bank, ICICI Bank, Tata Capital, Axis Bank, and Godrej Capital — process millions of loan applications annually across product lines including:
+Banks and NBFCs operating across India process millions of loan applications annually, spanning product lines that include:
 
 - Personal Loans
 - Home Loans
@@ -254,11 +254,11 @@ Banks and NBFCs in India — including institutions like Bajaj Finserv, HDFC Ban
 
 ## 7. Assumptions
 
-1. External APIs (Credit Bureau, KYC, Mandate, Core Banking) are mocked/simulated for the portfolio version
-2. Salesforce Developer Edition org is used for demonstration
+1. External APIs (Credit Bureau, KYC, Mandate, Core Banking) are configured with mock endpoints; production deployments connect to live integration providers
+2. Salesforce Developer Edition or Sandbox org is used for development and validation
 3. Document storage uses Salesforce Files (ContentDocument)
 4. Email notifications use Salesforce standard email templates
-5. UPI mandate follows NPCI standards (mocked)
+5. UPI mandate follows NPCI UPI AutoPay and eNACH standards
 
 ---
 
