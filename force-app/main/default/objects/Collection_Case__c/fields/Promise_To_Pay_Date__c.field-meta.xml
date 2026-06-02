@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Promise_To_Pay_Date__c</fullName>
+    <label>Promise to Pay Date</label>
+    <required>false</required>
+    <type>Date</type>
+    <description>Date committed by the customer during a collections call for repayment. Used for follow-up scheduling.</description>
+</CustomField>

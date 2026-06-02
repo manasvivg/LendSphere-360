@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_Grade__c</fullName>
+    <label>Risk Grade</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>A</fullName><default>false</default><label>A – Excellent (750+)</label></value>
+            <value><fullName>B</fullName><default>false</default><label>B – Good (700–749)</label></value>
+            <value><fullName>C</fullName><default>false</default><label>C – Fair (650–699)</label></value>
+            <value><fullName>D</fullName><default>false</default><label>D – Poor (600–649)</label></value>
+            <value><fullName>E</fullName><default>false</default><label>E – Very Poor (&lt;600)</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

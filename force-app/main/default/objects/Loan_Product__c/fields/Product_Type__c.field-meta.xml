@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Type__c</fullName>
+    <label>Product Type</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Home Loan</fullName><default>false</default><label>Home Loan</label></value>
+            <value><fullName>Personal Loan</fullName><default>false</default><label>Personal Loan</label></value>
+            <value><fullName>Vehicle Loan</fullName><default>false</default><label>Vehicle Loan</label></value>
+            <value><fullName>Business Loan</fullName><default>false</default><label>Business Loan</label></value>
+            <value><fullName>Gold Loan</fullName><default>false</default><label>Gold Loan</label></value>
+            <value><fullName>Consumer Durable Loan</fullName><default>false</default><label>Consumer Durable Loan</label></value>
+            <value><fullName>Loan Against Property</fullName><default>false</default><label>Loan Against Property</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Bucket__c</fullName>
+    <label>DPD Bucket</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>1-30 DPD</fullName><default>false</default><label>1-30 DPD</label></value>
+            <value><fullName>31-60 DPD</fullName><default>false</default><label>31-60 DPD</label></value>
+            <value><fullName>61-90 DPD</fullName><default>false</default><label>61-90 DPD</label></value>
+            <value><fullName>90+ DPD</fullName><default>false</default><label>90+ DPD (NPA Risk)</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

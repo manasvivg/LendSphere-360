@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EMI_Schedule__c</fullName>
+    <label>EMI Schedule</label>
+    <required>false</required>
+    <type>Lookup</type>
+    <referenceTo>EMI_Schedule__c</referenceTo>
+    <relationshipLabel>Collection Cases</relationshipLabel>
+    <relationshipName>Collection_Cases</relationshipName>
+</CustomField>

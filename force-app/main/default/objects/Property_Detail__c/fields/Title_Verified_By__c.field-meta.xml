@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Title_Verified_By__c</fullName>
+    <label>Title Verified By</label>
+    <required>false</required>
+    <type>Lookup</type>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Title Verifications</relationshipLabel>
+    <relationshipName>Title_Verifications</relationshipName>
+</CustomField>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EMI_Number__c</fullName>
+    <label>EMI Number</label>
+    <required>true</required>
+    <type>Number</type>
+    <precision>4</precision>
+    <scale>0</scale>
+    <description>Sequential EMI instalment number (1 = first month, N = last month). Used for amortisation schedule display and overdue detection.</description>
+</CustomField>

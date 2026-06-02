@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Requires_Collateral__c</fullName>
+    <label>Requires Collateral</label>
+    <defaultValue>false</defaultValue>
+    <description>If true, property/collateral evaluation is mandatory before Branch Manager sanction. Set to true for Home Loan, Vehicle Loan, Loan Against Property, and secured Business Loan.</description>
+    <type>Checkbox</type>
+</CustomField>

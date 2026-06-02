@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aadhaar_Encrypted__c</fullName>
+    <label>Aadhaar (Encrypted)</label>
+    <required>false</required>
+    <type>Text</type>
+    <length>255</length>
+    <unique>false</unique>
+    <externalId>false</externalId>
+    <description>Stores AES-256 encrypted Aadhaar number. Only last 4 digits may be displayed in UI. Use EncryptionUtil.encrypt() / decrypt() — never store or display plain text.</description>
+</CustomField>

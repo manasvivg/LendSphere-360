@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Paid_Amount__c</fullName>
+    <label>Paid Amount</label>
+    <required>false</required>
+    <type>Currency</type>
+    <precision>18</precision>
+    <scale>2</scale>
+    <description>Actual amount received. May differ from EMI_Amount__c in cases of partial payment or late charges.</description>
+</CustomField>

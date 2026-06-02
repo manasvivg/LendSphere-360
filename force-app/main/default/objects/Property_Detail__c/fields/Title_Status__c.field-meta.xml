@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Title_Status__c</fullName>
+    <label>Title Status</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Pending Verification</fullName><default>true</default><label>Pending Verification</label></value>
+            <value><fullName>Clear</fullName><default>false</default><label>Clear</label></value>
+            <value><fullName>Disputed</fullName><default>false</default><label>Disputed</label></value>
+            <value><fullName>Encumbered</fullName><default>false</default><label>Encumbered</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

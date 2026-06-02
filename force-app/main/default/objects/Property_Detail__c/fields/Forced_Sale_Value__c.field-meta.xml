@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Forced_Sale_Value__c</fullName>
+    <label>Forced Sale Value (FSV)</label>
+    <required>false</required>
+    <type>Currency</type>
+    <precision>18</precision>
+    <scale>2</scale>
+    <description>Estimated value of property under distress/forced sale conditions. Typically 60-80% of market value. Used for risk assessment.</description>
+</CustomField>
