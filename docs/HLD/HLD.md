@@ -70,7 +70,17 @@ flowchart TD
     L --> M{"Credit\nApproved?"}
     
     M -->|No| N["🔴 Application Rejected\n(Credit Declined)\nCustomer Notified"]
-    M -->|Yes| O["Branch Manager Reviews\nFinal Sanction"]
+    M -->|Yes| M2{"Secured\nProduct?"}
+    
+    M2 -->|No| O["Branch Manager Reviews\nFinal Sanction"]
+    M2 -->|Yes| PE1["Property Evaluation Assigned\n(Valuation Officer + Legal Officer)"]
+    PE1 --> PE2["Valuation Officer: Site Visit\nMarket Value + FSV Assessed"]
+    PE2 --> PE3["Legal Officer: Title Verification\nOwnership + Encumbrance Check"]
+    PE3 --> PE4{"Valuation &\nLegal Cleared?"}
+    
+    PE4 -->|No| PE5["🔴 Application Rejected\n(Property/Legal Issue)\nCustomer Notified"]
+    PE4 -->|Yes| O
+    
     O --> P{"Sanctioned?"}
     
     P -->|No| Q["🔴 Application Rejected\n(Sanction Declined)\nCustomer Notified"]
@@ -128,7 +138,7 @@ graph LR
     end
 
     subgraph "Data Layer"
-        OBJ["Custom Objects\n(10 objects)"]
+        OBJ["Custom Objects\n(11 objects)"]
         LOG["Application_Log__c"]
         CMD["Custom Metadata"]
     end
@@ -168,8 +178,9 @@ graph LR
 | Loan Application | Customer Onboarding, Loan Product | KYC, Document Management, Approval |
 | KYC Verification | Loan Application | Credit Assessment |
 | Document Management | Loan Application | Operations Review |
-| Credit Assessment | KYC Verification, Credit Bureau API | Approval Workflow |
-| Approval Workflow | Credit Assessment, Document Management | Mandate Setup |
+| Credit Assessment | KYC Verification, Credit Bureau API | Property Evaluation (secured) / Approval Workflow (unsecured) |
+| Property Evaluation | Credit Assessment, Loan Product Config | Approval Workflow |
+| Approval Workflow | Credit Assessment, Property Evaluation, Document Management | Mandate Setup |
 | Mandate Setup | Approval Workflow, UPI API | Disbursement |
 | Loan Disbursement | Mandate Setup, Core Banking API | EMI Schedule, Servicing |
 | EMI Schedule | Disbursement | Collections, Customer Portal |

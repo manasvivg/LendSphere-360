@@ -124,7 +124,8 @@ Banks and NBFCs operating across India process millions of loan applications ann
 | KYC Verification      | PAN & Aadhaar verification via API                          |
 | Document Management   | Upload, classify, verify, track documents                   |
 | Credit Assessment     | Bureau callout, score storage, risk grading                 |
-| Approval Workflow     | 3-stage approval (Operations → Credit → Manager)            |
+| Property Evaluation   | Property valuation, legal title verification (secured loans)|
+| Approval Workflow     | 4-stage approval (Ops → Credit → Property/Legal → Manager) |
 | UPI/eNACH Mandate     | Mandate setup, activation tracking                          |
 | Loan Disbursement     | Core banking API integration, disbursement record           |
 | EMI Schedule          | Auto-generated schedule post-disbursement                   |
@@ -132,7 +133,7 @@ Banks and NBFCs operating across India process millions of loan applications ann
 | Dealer Portal         | Portal: create applications, track status, view commissions |
 | Case Management       | Inbound support cases, routing, SLA tracking                |
 | Collections           | Overdue detection, collections case creation, follow-ups    |
-| Reporting             | Dashboards for Management, Ops, Credit, Collections         |
+| Reporting             | Dashboards for Management, Ops, Credit, Valuation, Collections |
 
 ### 4.2 Out of Scope (Phase 1)
 
@@ -196,17 +197,30 @@ Banks and NBFCs operating across India process millions of loan applications ann
 | FR-CA-004 | Credit analyst shall be notified via email + in-app notification upon score availability          |
 | FR-CA-005 | System shall publish `Credit_Assessment_Completed__e` after score storage                         |
 
-### 5.6 Approval Workflow
+### 5.6 Property & Collateral Evaluation
 
 | ID        | Requirement                                                                                                   |
 | --------- | ------------------------------------------------------------------------------------------------------------- |
-| FR-AW-001 | Applications shall go through 3-stage approval: Operations Review → Credit Approval → Branch Manager Sanction |
-| FR-AW-002 | Each approver shall receive email notification when action is pending                                         |
-| FR-AW-003 | Rejected applications shall capture rejection reason                                                          |
-| FR-AW-004 | Approval decisions shall be fully audited                                                                     |
-| FR-AW-005 | System shall publish `Loan_Approved__e` upon Branch Manager sanction                                          |
+| FR-PE-001 | Property evaluation shall be conditionally triggered based on `Loan_Product__c.Requires_Collateral__c` flag   |
+| FR-PE-002 | For secured loan products, a `Property_Detail__c` record shall be created and linked to the Loan Application  |
+| FR-PE-003 | Valuation Officer shall capture: property type, address, area, market value, forced sale value, condition      |
+| FR-PE-004 | Legal Officer shall verify: title clearance, ownership documents, encumbrance status, and provide legal opinion|
+| FR-PE-005 | System shall auto-calculate LTV (Loan-to-Value) ratio as `(Loan_Amount / Market_Value) * 100`                 |
+| FR-PE-006 | Both Valuation Officer approval and Legal Officer clearance are required before Branch Manager sanction        |
+| FR-PE-007 | Valuation and legal remarks shall be stored on `Property_Detail__c` with full audit trail                     |
 
-### 5.7 Mandate Setup
+### 5.7 Approval Workflow
+
+| ID        | Requirement                                                                                                                              |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-AW-001 | Applications shall go through 4-stage approval: Operations Review → Credit Approval → Property/Legal Evaluation → Branch Manager Sanction |
+| FR-AW-002 | Each approver shall receive email notification when action is pending                                                                    |
+| FR-AW-003 | Rejected applications shall capture rejection reason                                                                                     |
+| FR-AW-004 | Approval decisions shall be fully audited                                                                                                |
+| FR-AW-005 | System shall publish `Loan_Approved__e` upon Branch Manager sanction                                                                     |
+| FR-AW-006 | For unsecured products, property/legal evaluation stage shall be automatically skipped                                                   |
+
+### 5.8 Mandate Setup
 
 | ID        | Requirement                                                                                           |
 | --------- | ----------------------------------------------------------------------------------------------------- |
@@ -215,7 +229,7 @@ Banks and NBFCs operating across India process millions of loan applications ann
 | FR-MS-003 | Mandate status shall be tracked: Pending → Active → Failed → Cancelled                                |
 | FR-MS-004 | System shall publish `Mandate_Activated__e` upon mandate activation                                   |
 
-### 5.8 Loan Disbursement
+### 5.9 Loan Disbursement
 
 | ID        | Requirement                                                                                |
 | --------- | ------------------------------------------------------------------------------------------ |
@@ -225,7 +239,7 @@ Banks and NBFCs operating across India process millions of loan applications ann
 | FR-LD-004 | System shall publish `Loan_Disbursed__e` upon successful disbursement                      |
 | FR-LD-005 | Customer shall receive disbursement confirmation via email and portal notification         |
 
-### 5.9 Collections
+### 5.10 Collections
 
 | ID        | Requirement                                                                    |
 | --------- | ------------------------------------------------------------------------------ |
@@ -264,13 +278,15 @@ Banks and NBFCs operating across India process millions of loan applications ann
 
 ## 8. Stakeholders
 
-| Role                | Name/Type | Interest                   |
-| ------------------- | --------- | -------------------------- |
-| Customer            | External  | Loan access, transparency  |
-| Dealer              | External  | Commission, fast approvals |
-| Operations Officer  | Internal  | Efficiency, clear queue    |
-| Credit Analyst      | Internal  | Complete data, fast tools  |
-| Branch Manager      | Internal  | Risk visibility, controls  |
-| Service Agent       | Internal  | Customer 360°, resolution  |
-| Collections Officer | Internal  | Portfolio visibility       |
-| Management          | Internal  | Real-time KPIs, compliance |
+| Role                | Name/Type | Interest                              |
+| ------------------- | --------- | ------------------------------------- |
+| Customer            | External  | Loan access, transparency             |
+| Dealer              | External  | Commission, fast approvals            |
+| Operations Officer  | Internal  | Efficiency, clear queue               |
+| Credit Analyst      | Internal  | Complete data, fast tools             |
+| Valuation Officer   | Internal  | Timely site visits, clear assignments |
+| Legal Officer       | Internal  | Title clarity, legal compliance       |
+| Branch Manager      | Internal  | Risk visibility, controls             |
+| Service Agent       | Internal  | Customer 360°, resolution             |
+| Collections Officer | Internal  | Portfolio visibility                  |
+| Management          | Internal  | Real-time KPIs, compliance            |

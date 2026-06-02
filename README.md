@@ -166,7 +166,9 @@ graph TB
 |---|---|---|
 | **Operations Officer** | KYC & document verification, initial screening | Operations Queue |
 | **Credit Analyst** | Credit score review, eligibility, risk evaluation | Credit App |
-| **Branch Manager** | Final sanction approval | Approval App |
+| **Valuation Officer** | Physical site visit, market value assessment, valuation report | Valuation Queue |
+| **Legal Officer** | Title search, legal opinion, encumbrance verification | Legal Queue |
+| **Branch Manager** | Final sanction approval (credit + property + legal) | Approval App |
 | **Customer Service Agent** | Case resolution, customer communication | Service Console |
 | **Collections Officer** | EMI follow-ups, delinquency management | Collections App |
 
@@ -208,46 +210,56 @@ graph TB
 - Risk grade calculation (A/B/C/D/E)
 - Credit analyst review queue
 
-### 7. Approval Workflow
-- Three-stage approval: Operations → Credit Analyst → Branch Manager
+### 7. Property & Collateral Evaluation
+- Conditionally triggered for secured loan products (Home Loan, Vehicle Loan, Loan Against Property)
+- Controlled by `Loan_Product__c.Requires_Collateral__c` flag
+- **Valuation Officer**: Physical site visit, market value and forced sale value assessment, valuation report
+- **Legal Officer**: Title search, ownership verification, encumbrance check, legal opinion
+- Property details tracked on `Property_Detail__c`
+- LTV (Loan-to-Value) ratio auto-calculated
+- Both valuation and legal clearance required before Branch Manager sanction
+
+### 8. Approval Workflow
+- Four-stage approval: Operations → Credit Analyst → Property/Legal Evaluation → Branch Manager
 - Automated rejections with reason capture
 - Email notifications at each stage
 
-### 8. UPI / eNACH Mandate Setup
+### 9. UPI / eNACH Mandate Setup
 - Post-sanction mandate request to customer portal
 - Customer chooses UPI or eNACH
 - API integration with mandate provider
 - Mandate tracking on `Mandate__c`
 
-### 9. Loan Disbursement
+### 10. Loan Disbursement
 - Queueable Apex calls Core Banking API
 - Disbursement record created (`Disbursement__c`)
 - EMI schedule auto-generated (`EMI_Schedule__c`)
 - Customer notified via email + portal
 
-### 10. Customer Self-Service
+### 11. Customer Self-Service
 - View active loans and EMI schedule
 - Download loan statements (PDF)
 - Raise support cases
 - Track application status in real-time
 
-### 11. Case Management (Service Cloud)
+### 12. Case Management (Service Cloud)
 - Inbound case creation from Customer Portal
 - Auto-routing to appropriate service queue
 - SLA tracking
 - Email-to-case integration
 
-### 12. Collections Management
+### 13. Collections Management
 - Automated detection of overdue EMIs (Batch Apex)
 - `Collection_Case__c` auto-creation
 - Collections officer assignment
 - Follow-up activity scheduling (Scheduled Apex)
 - Delinquency reporting dashboard
 
-### 13. Reporting & Analytics
+### 14. Reporting & Analytics
 - Management: Applications, Approvals, Disbursements, Revenue
 - Operations: KYC backlog, Document verification queue
 - Credit: Risk distribution, Approval trends
+- Valuation: Pending valuations, LTV distribution
 - Collections: Overdue portfolio, Recovery rate
 
 ---
@@ -275,6 +287,7 @@ graph TB
 | `KYC_Request__c` | PAN__c, Aadhaar__c, Verification_Status__c, Verified_Date__c | KYC tracking |
 | `Document__c` | Document_Type__c, Verification_Status__c, Upload_Date__c | Document management |
 | `Credit_Assessment__c` | Credit_Score__c, Risk_Grade__c, Bureau_Reference__c | Bureau score storage |
+| `Property_Detail__c` | Property_Type__c, Market_Value__c, Valuation_Status__c, Title_Status__c, LTV_Ratio__c | Property/collateral evaluation |
 | `Mandate__c` | Mandate_Type__c, Mandate_Status__c, VPA__c, Bank_Account__c | UPI/eNACH details |
 | `Disbursement__c` | Disbursed_Amount__c, Disbursement_Date__c, Reference_Number__c | Disbursement records |
 | `EMI_Schedule__c` | EMI_Number__c, Due_Date__c, EMI_Amount__c, Status__c | Repayment schedule |
@@ -345,12 +358,13 @@ TriggerHandler.cls          ← Abstract base class
 ### Service Layer
 
 ```
-LoanApplicationService.cls  ← Core application business logic
-CreditService.cls           ← Credit assessment orchestration
-KYCService.cls              ← KYC workflow management
-MandateService.cls          ← UPI/eNACH mandate processing
-DisbursementService.cls     ← Disbursement orchestration
-CollectionService.cls       ← Collections workflow
+LoanApplicationService.cls       ← Core application business logic
+CreditService.cls                ← Credit assessment orchestration
+KYCService.cls                   ← KYC workflow management
+PropertyValuationService.cls     ← Property evaluation & legal clearance
+MandateService.cls               ← UPI/eNACH mandate processing
+DisbursementService.cls          ← Disbursement orchestration
+CollectionService.cls            ← Collections workflow
 ```
 
 ### Integration Layer
@@ -391,6 +405,7 @@ ReminderScheduler.cls       ← Scheduled notifications
 | `loanApplicationWizard` | Customer & Dealer Portal | Multi-step application form with validation |
 | `customerDashboard` | Customer Portal | Active loans, EMI due dates, quick actions |
 | `creditScoreViewer` | Internal Credit App | Gauge chart for credit score + risk factors |
+| `propertyValuationForm` | Internal Valuation App | Property details capture, valuation entry, LTV display |
 | `documentUpload` | All Portals | Drag & drop upload with progress tracking |
 | `loanTracker` | Customer Portal | Visual lifecycle timeline tracker |
 | `emiCalculator` | Customer Portal | Real-time EMI calculation tool |

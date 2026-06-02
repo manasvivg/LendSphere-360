@@ -133,6 +133,34 @@ erDiagram
         Id Reviewed_By__c FK
     }
 
+    Property_Detail__c {
+        Id Id PK
+        string Property_Ref__c
+        Id Loan_Application__c FK
+        string Property_Type__c
+        string Collateral_Category__c
+        string Property_Address__c
+        string City__c
+        string State__c
+        string Pincode__c
+        decimal Property_Area_SqFt__c
+        decimal Plot_Area_SqFt__c
+        string Construction_Status__c
+        integer Year_Of_Construction__c
+        decimal Market_Value__c
+        decimal Forced_Sale_Value__c
+        decimal LTV_Ratio__c
+        string Ownership_Type__c
+        string Title_Status__c
+        Id Title_Verified_By__c FK
+        string Valuation_Status__c
+        date Valuation_Date__c
+        Id Valuation_Officer__c FK
+        string Valuation_Report_Ref__c
+        string Valuation_Remarks__c
+        string Legal_Remarks__c
+    }
+
     Mandate__c {
         Id Id PK
         Id Loan_Application__c FK
@@ -225,6 +253,7 @@ erDiagram
     Loan_Application__c ||--|| KYC_Request__c : "has"
     Loan_Application__c ||--o{ Document__c : "has"
     Loan_Application__c ||--|| Credit_Assessment__c : "has"
+    Loan_Application__c ||--o| Property_Detail__c : "has"
     Loan_Application__c ||--|| Mandate__c : "has"
     Loan_Application__c ||--|| Disbursement__c : "has"
     Disbursement__c ||--o{ EMI_Schedule__c : "generates"
@@ -252,6 +281,7 @@ erDiagram
 | Custom | `KYC_Request__c` | Thousands (1:1 with App) | KYC tracking |
 | Custom | `Document__c` | Tens of thousands | Document records |
 | Custom | `Credit_Assessment__c` | Thousands (1:1 with App) | Credit scores |
+| Custom | `Property_Detail__c` | Thousands (conditional) | Collateral evaluation |
 | Custom | `Mandate__c` | Thousands (1:1 with App) | Mandate details |
 | Custom | `Disbursement__c` | Thousands (1:1 with App) | Disbursement records |
 | Custom | `EMI_Schedule__c` | Millions | EMI repayment schedule |
@@ -270,6 +300,7 @@ Account (1) ──── (M) Loan_Application__c
                          ├── (1) KYC_Request__c
                          ├── (M) Document__c
                          ├── (1) Credit_Assessment__c
+                         ├── (0..1) Property_Detail__c  (conditional: secured products)
                          ├── (1) Mandate__c
                          ├── (1) Disbursement__c
                          │       └── (M) EMI_Schedule__c
@@ -310,7 +341,7 @@ Account (1) ──── (M) Loan_Application__c
 | Co-Applicant PAN | Co_Applicant_PAN__c | Text (Encrypted) | No | |
 
 **Status Picklist Values:**
-`Draft` → `Submitted` → `Under Review` → `KYC Verified` → `Credit Assessment` → `Sanctioned` → `Mandate Pending` → `Mandate Active` → `Disbursed` → `Rejected` → `Closed`
+`Draft` → `Submitted` → `Under Review` → `KYC Verified` → `Credit Assessment` → `Property Evaluation` → `Sanctioned` → `Mandate Pending` → `Mandate Active` → `Disbursed` → `Rejected` → `Closed`
 
 ---
 

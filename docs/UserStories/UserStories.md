@@ -263,11 +263,82 @@ And I can click "Approve Credit" or "Reject with Reason"
 
 ---
 
-## Epic 6: Approval Workflow
+## Epic 6: Property & Collateral Evaluation
 
 ---
 
-### US-012 – Operations Officer Approval
+### US-012 – Assign Property Valuation (System)
+
+**As the** System,
+**I want to** automatically create a Property Evaluation assignment when credit assessment is approved for a secured loan product,
+**So that** the valuation and legal verification process begins without manual intervention.
+
+**Acceptance Criteria:**
+
+```gherkin
+Given a loan application has passed Credit Assessment
+And the linked Loan Product has Requires_Collateral__c = true
+When Credit_Assessment_Completed__e is consumed and the analyst approves
+Then a Property_Detail__c record is created linked to the Loan Application
+And the record is assigned to the Property Valuation Queue
+And the Valuation Officer and Legal Officer receive notifications
+And the application status changes to "Property Evaluation"
+```
+
+**Priority:** High | **Story Points:** 5
+
+---
+
+### US-013 – Complete Property Valuation (Valuation Officer)
+
+**As a** Valuation Officer,
+**I want to** capture property details and submit a valuation report after site visit,
+**So that** the Branch Manager has accurate collateral value for the sanction decision.
+
+**Acceptance Criteria:**
+
+```gherkin
+Given a Property_Detail__c record is assigned to me in the Valuation Queue
+When I open the Property Valuation Form LWC
+And I capture: Property Type, Address, Area, Construction Status, Market Value, Forced Sale Value
+And I upload site visit photos and valuation report
+And I submit the valuation as "Approved" or "Rejected"
+Then the Property_Detail__c record is updated with all details
+And LTV ratio is auto-calculated
+And if Rejected: the application is flagged with rejection remarks
+```
+
+**Priority:** High | **Story Points:** 8
+
+---
+
+### US-014 – Legal Title Verification (Legal Officer)
+
+**As a** Legal Officer,
+**I want to** verify the property title, ownership documents, and encumbrance status,
+**So that** the institution is protected against title disputes on the collateral.
+
+**Acceptance Criteria:**
+
+```gherkin
+Given a Property_Detail__c record exists for a loan application
+When I review the property ownership documents
+And I complete: Title Status (Clear/Disputed/Encumbered), Ownership Type, Legal Remarks
+And I mark Legal Verification as "Cleared" or "Rejected"
+Then the Property_Detail__c record is updated
+And if both Valuation and Legal are cleared: the application routes to Branch Manager
+And if Rejected: the application is rejected with legal rejection reason
+```
+
+**Priority:** High | **Story Points:** 5
+
+---
+
+## Epic 7: Approval Workflow
+
+---
+
+### US-015 – Operations Officer Approval
 
 **As an** Operations Officer,
 **I want to** review and approve the KYC and document verification,
@@ -287,7 +358,7 @@ And the Credit Analyst receives a notification to begin assessment
 
 ---
 
-### US-013 – Branch Manager Final Sanction
+### US-016 – Branch Manager Final Sanction
 
 **As a** Branch Manager,
 **I want to** review the fully assessed loan application and provide final sanction,
@@ -297,7 +368,8 @@ And the Credit Analyst receives a notification to begin assessment
 
 ```gherkin
 Given Credit Analyst has approved the application
-When I review the application, credit score, and loan terms as Branch Manager
+And for secured products: Valuation Officer and Legal Officer have both cleared the property
+When I review the application, credit score, property valuation (if applicable), and loan terms
 And I click "Sanction Loan"
 Then the application status changes to "Sanctioned"
 And Loan_Approved__e platform event is published
@@ -309,11 +381,11 @@ And the system triggers the Mandate setup process
 
 ---
 
-## Epic 7: Mandate Setup
+## Epic 8: Mandate Setup
 
 ---
 
-### US-014 – Setup UPI Mandate (Customer)
+### US-017 – Setup UPI Mandate (Customer)
 
 **As a** Customer,
 **I want to** set up a UPI mandate for auto-debit of my EMIs,
@@ -334,11 +406,11 @@ And if failed: I see an error message and can retry or switch to eNACH
 
 ---
 
-## Epic 8: Loan Disbursement
+## Epic 9: Loan Disbursement
 
 ---
 
-### US-015 – Loan Disbursement via Core Banking
+### US-018 – Loan Disbursement via Core Banking
 
 **As the** System,
 **I want to** disburse the loan to the customer's bank account upon mandate activation,
@@ -360,11 +432,11 @@ And the customer receives a disbursement confirmation email
 
 ---
 
-## Epic 9: Customer Self-Service
+## Epic 10: Customer Self-Service
 
 ---
 
-### US-016 – View EMI Schedule
+### US-019 – View EMI Schedule
 
 **As a** Customer,
 **I want to** view my full EMI repayment schedule,
@@ -384,7 +456,7 @@ And paid EMIs show a green "Paid" badge
 
 ---
 
-### US-017 – Raise Service Case
+### US-020 – Raise Service Case
 
 **As a** Customer,
 **I want to** raise a support case from the Customer Portal,
@@ -404,11 +476,11 @@ And a Service Agent receives the case in the appropriate queue
 
 ---
 
-## Epic 10: Collections
+## Epic 11: Collections
 
 ---
 
-### US-018 – Auto-Detect Overdue EMIs (System)
+### US-021 – Auto-Detect Overdue EMIs (System)
 
 **As the** Collections System,
 **I want to** automatically identify overdue EMIs every day,
@@ -429,7 +501,7 @@ And the case is assigned to the appropriate Collections Officer
 
 ---
 
-### US-019 – Collections Officer Follow-Up
+### US-022 – Collections Officer Follow-Up
 
 **As a** Collections Officer,
 **I want to** see my portfolio of overdue loans in a dashboard,
@@ -450,11 +522,11 @@ And I can mark a case as "Promise to Pay" with a promised date
 
 ---
 
-## Epic 11: Reporting
+## Epic 12: Reporting
 
 ---
 
-### US-020 – Management Dashboard
+### US-023 – Management Dashboard
 
 **As a** Branch Manager / Senior Management,
 **I want to** see a real-time lending KPI dashboard,
@@ -479,5 +551,5 @@ And all charts auto-refresh when underlying data changes
 
 ---
 
-*Total User Stories: 20 across 11 Epics*
-*Total Story Points: 148*
+*Total User Stories: 23 across 12 Epics*
+*Total Story Points: 172*

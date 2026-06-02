@@ -343,6 +343,7 @@ Loan_Disbursed__e Published
 | `KYC_Request__c` | Private | Private |
 | `Document__c` | Private | Private |
 | `Credit_Assessment__c` | Private | No Access |
+| `Property_Detail__c` | Private | No Access |
 | `Mandate__c` | Private | Private |
 | `Disbursement__c` | Private | Private |
 | `EMI_Schedule__c` | Private | Private |
@@ -357,6 +358,8 @@ CEO / Management
     ├── Branch Manager
     │       ├── Operations Officer
     │       ├── Credit Analyst
+    │       ├── Valuation Officer
+    │       ├── Legal Officer
     │       └── Customer Service Agent
     │
     └── Collections Manager
@@ -369,6 +372,8 @@ CEO / Management
 |---|---|
 | `LendSphere_Operations_PS` | Operations Officers |
 | `LendSphere_Credit_PS` | Credit Analysts |
+| `LendSphere_Valuation_PS` | Valuation Officers |
+| `LendSphere_Legal_PS` | Legal Officers |
 | `LendSphere_BranchManager_PS` | Branch Managers |
 | `LendSphere_ServiceAgent_PS` | Customer Service Agents |
 | `LendSphere_Collections_PS` | Collections Officers |

@@ -161,7 +161,78 @@ sequenceDiagram
 
 ---
 
-## Sequence 4: UPI Mandate Setup
+## Sequence 4: Property & Collateral Evaluation
+
+```mermaid
+sequenceDiagram
+    participant PE as Platform Event Bus
+    participant SRV as CreditService.cls
+    participant PROP as Property_Detail__c
+    participant LA as Loan_Application__c
+    participant PROD as Loan_Product__c
+    actor VALOFFICER as 🏠 Valuation Officer
+    actor LEGAL as ⚖️ Legal Officer
+    participant SFAPP as Salesforce App
+    participant LOG as Application_Log__c
+
+    Note over PE: Credit_Assessment_Completed__e received (Credit Analyst approved)
+
+    PE->>SRV: Consume Credit_Assessment_Completed__e
+    SRV->>LA: Query Loan_Application__c + Loan_Product__c
+    SRV->>PROD: Check Requires_Collateral__c flag
+
+    alt Unsecured Product (Personal Loan, Consumer Durable, etc.)
+        SRV->>LA: Skip Property Evaluation → Route to Approval Workflow
+        Note over SRV: Application proceeds directly to Branch Manager queue
+    else Secured Product (Home Loan, Vehicle Loan, LAP, etc.)
+        SRV->>PROP: Create Property_Detail__c (Valuation_Status__c: Pending)
+        PROP-->>SRV: propertyDetailId
+        SRV->>LA: Update Status__c = "Property Evaluation"
+        SRV->>SFAPP: Assign to Property Valuation Queue
+        SFAPP->>VALOFFICER: Notification: "New property valuation assigned"
+        SFAPP->>LEGAL: Notification: "New legal verification assigned"
+    end
+
+    Note over VALOFFICER: Conducts physical site visit
+
+    VALOFFICER->>SFAPP: Open Property Valuation Form LWC
+    SFAPP->>PROP: Load Property_Detail__c record
+    PROP-->>SFAPP: Display valuation form
+
+    VALOFFICER->>SFAPP: Capture: Property Type, Address, Area, Construction Status
+    VALOFFICER->>SFAPP: Enter Market Value + Forced Sale Value (FSV)
+    VALOFFICER->>SFAPP: Upload site visit photos + valuation report
+    SFAPP->>PROP: Update Market_Value__c, Forced_Sale_Value__c
+    PROP->>PROP: Auto-calculate LTV_Ratio__c = (Loan_Amount / Market_Value) * 100
+    VALOFFICER->>SFAPP: Submit Valuation as "Approved" / "Rejected"
+    SFAPP->>PROP: Update Valuation_Status__c
+    SFAPP->>LOG: logInfo("Valuation submitted", propertyDetailId)
+
+    Note over LEGAL: Reviews ownership and title documents
+
+    LEGAL->>SFAPP: Open Property_Detail__c record
+    LEGAL->>SFAPP: Verify: Title Deed, Ownership Proof, Encumbrance Certificate
+    LEGAL->>SFAPP: Set Title_Status__c = "Clear" / "Disputed" / "Encumbered"
+    LEGAL->>SFAPP: Enter Legal_Remarks__c
+    LEGAL->>SFAPP: Submit Legal Clearance as "Cleared" / "Rejected"
+    SFAPP->>PROP: Update Title_Status__c, Legal_Remarks__c
+    SFAPP->>LOG: logInfo("Legal verification submitted", propertyDetailId)
+
+    alt Both Valuation Approved AND Legal Cleared
+        SFAPP->>LA: Route application to Branch Manager Approval Queue
+        SFAPP->>SFAPP: Notify Branch Manager: "Application ready for final sanction"
+        Note over SFAPP: Loan_Application__c Status remains "Property Evaluation" until BM acts
+    else Valuation Rejected OR Legal Rejected
+        SFAPP->>LA: Update Status__c = "Rejected"
+        SFAPP->>SFAPP: Capture rejection reason from Property_Detail__c
+        SFAPP->>SFAPP: Notify Customer: "Application rejected – property/legal issue"
+        SFAPP->>LOG: logError("Property evaluation rejected", propertyDetailId)
+    end
+```
+
+---
+
+## Sequence 5: UPI Mandate Setup
 
 ```mermaid
 sequenceDiagram
@@ -214,7 +285,7 @@ sequenceDiagram
 
 ---
 
-## Sequence 5: Loan Disbursement
+## Sequence 6: Loan Disbursement
 
 ```mermaid
 sequenceDiagram
@@ -279,7 +350,7 @@ sequenceDiagram
 
 ---
 
-## Sequence 6: Collections Follow-Up (Batch Processing)
+## Sequence 7: Collections Follow-Up (Batch Processing)
 
 ```mermaid
 sequenceDiagram
