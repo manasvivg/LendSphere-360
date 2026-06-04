@@ -1,0 +1,127 @@
+<template>
+    <div class="dashboard-container">
+        <!-- Header Section -->
+        <div class="dashboard-header">
+            <div class="welcome-section">
+                <h1 class="greeting">Welcome back, {customerName} 👋</h1>
+                <p class="subtitle">Here's your loan portfolio overview</p>
+            </div>
+            <div class="header-actions">
+                <lightning-button label="Apply for Loan" variant="brand" onclick={applyForLoan}></lightning-button>
+                <lightning-button label="Raise a Case" variant="neutral" onclick={raiseCase}></lightning-button>
+            </div>
+        </div>
+
+        <!-- Summary KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card kpi-blue">
+                <div class="kpi-icon">💰</div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Total Loan Portfolio</p>
+                    <p class="kpi-value">₹{totalPortfolioFormatted}</p>
+                </div>
+            </div>
+            <div class="kpi-card kpi-green">
+                <div class="kpi-icon">✅</div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Active Loans</p>
+                    <p class="kpi-value">{activeLoansCount}</p>
+                </div>
+            </div>
+            <div class="kpi-card kpi-orange">
+                <div class="kpi-icon">📅</div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Next EMI Due</p>
+                    <p class="kpi-value">{nextEMIDate}</p>
+                    <p class="kpi-sub">₹{nextEMIAmount}</p>
+                </div>
+            </div>
+            <div class="kpi-card kpi-purple">
+                <div class="kpi-icon">📊</div>
+                <div class="kpi-content">
+                    <p class="kpi-label">Outstanding Balance</p>
+                    <p class="kpi-value">₹{totalOutstandingFormatted}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Loans Section -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Active Loans</h2>
+                <lightning-button-icon icon-name="utility:refresh" variant="bare" onclick={refreshLoans}></lightning-button-icon>
+            </div>
+            <template if:true={hasActiveLoans}>
+                <div class="loans-list">
+                    <template for:each={activeLoans} for:item="loan">
+                        <div key={loan.Id} class="loan-card" data-id={loan.Id} onclick={viewLoanDetail}>
+                            <div class="loan-header">
+                                <div class="loan-product-badge">{loan.Loan_Product__r.Product_Type__c}</div>
+                                <div class="loan-status-badge" data-status={loan.Status__c}>{loan.Status__c}</div>
+                            </div>
+                            <div class="loan-number">Loan No: {loan.Name}</div>
+                            <div class="loan-metrics">
+                                <div class="metric">
+                                    <span class="metric-label">Sanctioned</span>
+                                    <span class="metric-value">₹{loan.sanctionedFormatted}</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">EMI</span>
+                                    <span class="metric-value">₹{loan.EMI_Amount__c}</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Tenure</span>
+                                    <span class="metric-value">{loan.Tenure_Months__c} mo</span>
+                                </div>
+                            </div>
+                            <div class="repayment-progress">
+                                <div class="progress-track">
+                                    <div class="progress-fill" style={loan.progressStyle}></div>
+                                </div>
+                                <span class="progress-label">{loan.progressPercent}% paid</span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <template if:false={hasActiveLoans}>
+                <div class="empty-state">
+                    <p>🏦 No active loans. Apply for your first loan!</p>
+                </div>
+            </template>
+        </div>
+
+        <!-- Upcoming EMIs -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2>Upcoming EMIs</h2>
+                <a onclick={viewAllEMIs} class="view-all-link">View All</a>
+            </div>
+            <template if:true={hasUpcomingEMIs}>
+                <lightning-datatable
+                    data={upcomingEMIs}
+                    columns={emiColumns}
+                    key-field="Id"
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </template>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="section-card" if:true={hasPendingApplications}>
+            <div class="section-header">
+                <h2>Applications in Progress</h2>
+            </div>
+            <template for:each={pendingApplications} for:item="app">
+                <div key={app.Id} class="application-row">
+                    <div class="app-info">
+                        <span class="app-number">{app.Name}</span>
+                        <span class="app-product">{app.Loan_Product__r.Product_Name__c}</span>
+                    </div>
+                    <div class="app-status" data-status={app.Status__c}>{app.Status__c}</div>
+                    <lightning-button label="Track" variant="neutral" data-id={app.Id} onclick={trackApplication}></lightning-button>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

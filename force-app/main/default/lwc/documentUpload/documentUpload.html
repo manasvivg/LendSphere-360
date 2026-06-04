@@ -1,0 +1,96 @@
+<template>
+    <div class="upload-container">
+        <div class="upload-header">
+            <h3 class="upload-title">{title}</h3>
+            <p class="upload-subtitle">{subtitle}</p>
+        </div>
+
+        <!-- Drag and Drop Zone -->
+        <div class="drop-zone"
+             ondragover={handleDragOver}
+             ondragleave={handleDragLeave}
+             ondrop={handleDrop}
+             data-active={isDragOver}
+             onclick={triggerFileInput}>
+            <div class="drop-zone-content">
+                <div class="upload-icon">📁</div>
+                <p class="drop-text">Drag &amp; drop files here, or <span class="click-link">click to browse</span></p>
+                <p class="drop-hint">Supported: PDF, JPG, PNG • Max size: 10 MB</p>
+            </div>
+            <input type="file" class="hidden-input" accept=".pdf,.jpg,.jpeg,.png"
+                   multiple onchange={handleFileSelect} data-id="fileInput">
+        </div>
+
+        <!-- Selected Files Preview -->
+        <div class="file-list" if:true={hasFiles}>
+            <h4 class="file-list-title">Selected Files</h4>
+            <template for:each={selectedFiles} for:item="file">
+                <div key={file.name} class="file-item">
+                    <div class="file-icon">{file.typeIcon}</div>
+                    <div class="file-info">
+                        <p class="file-name">{file.name}</p>
+                        <p class="file-size">{file.sizeLabel}</p>
+                    </div>
+                    <div class="file-status" data-status={file.status}>
+                        <template if:true={file.uploading}>
+                            <div class="upload-progress">
+                                <div class="progress-bar-fill" style={file.progressStyle}></div>
+                            </div>
+                            <span class="progress-label">{file.progress}%</span>
+                        </template>
+                        <template if:true={file.uploaded}>
+                            <span class="status-icon success">✅</span>
+                            <span class="status-text">Uploaded</span>
+                        </template>
+                        <template if:true={file.error}>
+                            <span class="status-icon error">❌</span>
+                            <span class="status-text">{file.errorMessage}</span>
+                        </template>
+                    </div>
+                    <button class="remove-btn" data-name={file.name} onclick={removeFile}>✕</button>
+                </div>
+            </template>
+        </div>
+
+        <!-- Existing Uploaded Documents -->
+        <div class="existing-docs" if:true={hasExistingDocs}>
+            <h4 class="existing-title">Previously Uploaded</h4>
+            <template for:each={existingDocuments} for:item="doc">
+                <div key={doc.Id} class="existing-doc-row">
+                    <span class="doc-type-badge">{doc.Document_Type__c}</span>
+                    <div class="doc-meta">
+                        <span class="doc-name">{doc.Name}</span>
+                        <span class="doc-date">Uploaded: {doc.Upload_Date__c}</span>
+                    </div>
+                    <div class="doc-verification" data-status={doc.Verification_Status__c}>
+                        {doc.Verification_Status__c}
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- Upload Action -->
+        <div class="upload-actions" if:true={hasFiles}>
+            <lightning-button
+                label="Upload All"
+                variant="brand"
+                onclick={uploadAll}
+                disabled={isUploading}>
+            </lightning-button>
+            <lightning-button
+                label="Clear All"
+                variant="neutral"
+                onclick={clearAll}
+                disabled={isUploading}>
+            </lightning-button>
+        </div>
+
+        <!-- Toast notification area -->
+        <template if:true={showToast}>
+            <div class="toast-notification" data-variant={toastVariant}>
+                <span class="toast-icon">{toastIcon}</span>
+                <span class="toast-message">{toastMessage}</span>
+            </div>
+        </template>
+    </div>
+</template>

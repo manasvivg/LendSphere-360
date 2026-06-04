@@ -1,0 +1,209 @@
+<template>
+    <div class="wizard-container">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <template for:each={steps} for:item="step">
+                <div key={step.id}
+                     class={step.cssClass}
+                     data-step={step.id}
+                     onclick={goToStep}>
+                    <span class="step-number">{step.number}</span>
+                    <span class="step-label">{step.label}</span>
+                </div>
+            </template>
+        </div>
+
+        <!-- Step 1: Product Selection -->
+        <template if:true={isStep1}>
+            <div class="step-content">
+                <h2 class="step-title">Select Loan Product</h2>
+                <p class="step-subtitle">Choose the loan type that fits your needs.</p>
+                <div class="product-grid">
+                    <template for:each={loanProducts} for:item="product">
+                        <div key={product.Id}
+                             class={product.cardClass}
+                             data-id={product.Id}
+                             onclick={selectProduct}>
+                            <div class="product-icon">{product.icon}</div>
+                            <h3 class="product-name">{product.Product_Name__c}</h3>
+                            <p class="product-type">{product.Product_Type__c}</p>
+                            <div class="product-meta">
+                                <span>₹{product.minAmountFormatted} – ₹{product.maxAmountFormatted}</span>
+                                <span>{product.Base_Interest_Rate__c}% p.a.</span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="loan-amount-section" if:true={selectedProduct}>
+                    <lightning-input
+                        type="number"
+                        label="Loan Amount (₹)"
+                        value={loanAmount}
+                        min={selectedProduct.Min_Amount__c}
+                        max={selectedProduct.Max_Amount__c}
+                        step="10000"
+                        onchange={handleLoanAmountChange}
+                        field-level-help="Enter the amount you wish to borrow">
+                    </lightning-input>
+                    <lightning-input
+                        type="number"
+                        label="Tenure (Months)"
+                        value={tenureMonths}
+                        min={selectedProduct.Min_Tenure_Months__c}
+                        max={selectedProduct.Max_Tenure_Months__c}
+                        onchange={handleTenureChange}>
+                    </lightning-input>
+                    <div class="emi-preview" if:true={estimatedEMI}>
+                        <span class="emi-label">Estimated EMI:</span>
+                        <span class="emi-value">₹{estimatedEMI}/month</span>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Step 2: Applicant Information -->
+        <template if:true={isStep2}>
+            <div class="step-content">
+                <h2 class="step-title">Applicant Information</h2>
+                <p class="step-subtitle">Provide your personal and contact details.</p>
+                <lightning-record-edit-form object-api-name="Loan_Application__c">
+                    <div class="form-grid">
+                        <lightning-input label="Full Name" value={applicantName}
+                                         onchange={handleFieldChange} data-field="applicantName" required></lightning-input>
+                        <lightning-input label="Date of Birth" type="date" value={dateOfBirth}
+                                         onchange={handleFieldChange} data-field="dateOfBirth" required></lightning-input>
+                        <lightning-input label="PAN Number" value={panNumber} maxlength="10"
+                                         pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+                                         onchange={handleFieldChange} data-field="panNumber" required></lightning-input>
+                        <lightning-input label="Aadhaar Number" value={aadhaarNumber} maxlength="12"
+                                         onchange={handleFieldChange} data-field="aadhaarNumber" required></lightning-input>
+                        <lightning-input label="Email" type="email" value={email}
+                                         onchange={handleFieldChange} data-field="email" required></lightning-input>
+                        <lightning-input label="Mobile Number" type="tel" value={mobile} maxlength="10"
+                                         onchange={handleFieldChange} data-field="mobile" required></lightning-input>
+                        <lightning-input label="Annual Income (₹)" type="number" value={annualIncome}
+                                         onchange={handleFieldChange} data-field="annualIncome" required></lightning-input>
+                        <lightning-combobox label="Employment Type" value={employmentType}
+                                            options={employmentOptions}
+                                            onchange={handleFieldChange} data-field="employmentType" required>
+                        </lightning-combobox>
+                    </div>
+                </lightning-record-edit-form>
+            </div>
+        </template>
+
+        <!-- Step 3: Co-Applicant -->
+        <template if:true={isStep3}>
+            <div class="step-content">
+                <h2 class="step-title">Co-Applicant Details</h2>
+                <p class="step-subtitle">Add a co-applicant to improve eligibility (optional).</p>
+                <div class="toggle-section">
+                    <lightning-input type="toggle" label="Add Co-Applicant"
+                                     checked={hasCoApplicant}
+                                     onchange={toggleCoApplicant}>
+                    </lightning-input>
+                </div>
+                <template if:true={hasCoApplicant}>
+                    <div class="form-grid">
+                        <lightning-input label="Co-Applicant Name" value={coApplicantName}
+                                         onchange={handleFieldChange} data-field="coApplicantName" required></lightning-input>
+                        <lightning-input label="Co-Applicant PAN" value={coApplicantPAN} maxlength="10"
+                                         onchange={handleFieldChange} data-field="coApplicantPAN" required></lightning-input>
+                        <lightning-combobox label="Relationship" value={relationship}
+                                            options={relationshipOptions}
+                                            onchange={handleFieldChange} data-field="relationship" required>
+                        </lightning-combobox>
+                        <lightning-input label="Co-Applicant Income (₹)" type="number"
+                                         value={coApplicantIncome}
+                                         onchange={handleFieldChange} data-field="coApplicantIncome">
+                        </lightning-input>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Step 4: Document Upload -->
+        <template if:true={isStep4}>
+            <div class="step-content">
+                <h2 class="step-title">Upload Documents</h2>
+                <p class="step-subtitle">Upload required KYC and income documents.</p>
+                <div class="document-list">
+                    <template for:each={requiredDocuments} for:item="doc">
+                        <div key={doc.type} class="document-row">
+                            <div class="doc-info">
+                                <span class="doc-icon">{doc.icon}</span>
+                                <div>
+                                    <p class="doc-name">{doc.label}</p>
+                                    <p class="doc-hint">{doc.hint}</p>
+                                </div>
+                            </div>
+                            <div class="doc-upload">
+                                <lightning-file-upload
+                                    label={doc.label}
+                                    name={doc.type}
+                                    accept={doc.accept}
+                                    record-id={applicationId}
+                                    onuploadfinished={handleUploadFinished}
+                                    multiple="false">
+                                </lightning-file-upload>
+                                <span class="upload-status" if:true={doc.uploaded}>✅ Uploaded</span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- Step 5: Review & Submit -->
+        <template if:true={isStep5}>
+            <div class="step-content">
+                <h2 class="step-title">Review & Submit</h2>
+                <p class="step-subtitle">Please review your application before submitting.</p>
+                <div class="review-section">
+                    <div class="review-card">
+                        <h3>Loan Details</h3>
+                        <div class="review-row"><span>Product</span><span>{selectedProduct.Product_Name__c}</span></div>
+                        <div class="review-row"><span>Loan Amount</span><span>₹{loanAmountFormatted}</span></div>
+                        <div class="review-row"><span>Tenure</span><span>{tenureMonths} months</span></div>
+                        <div class="review-row"><span>Interest Rate</span><span>{selectedProduct.Base_Interest_Rate__c}% p.a.</span></div>
+                        <div class="review-row highlight"><span>EMI</span><span>₹{estimatedEMI}/month</span></div>
+                    </div>
+                    <div class="review-card">
+                        <h3>Applicant Details</h3>
+                        <div class="review-row"><span>Name</span><span>{applicantName}</span></div>
+                        <div class="review-row"><span>PAN</span><span>{maskedPAN}</span></div>
+                        <div class="review-row"><span>Mobile</span><span>{mobile}</span></div>
+                        <div class="review-row"><span>Annual Income</span><span>₹{annualIncome}</span></div>
+                    </div>
+                </div>
+                <div class="consent-section">
+                    <lightning-input type="checkbox" label="I hereby declare that all information provided is accurate and consent to credit bureau inquiry."
+                                     checked={consentGiven} onchange={toggleConsent}>
+                    </lightning-input>
+                </div>
+            </div>
+        </template>
+
+        <!-- Navigation Buttons -->
+        <div class="wizard-nav">
+            <lightning-button label="Back" onclick={handleBack}
+                              variant="neutral" if:false={isStep1}>
+            </lightning-button>
+            <lightning-button label={nextButtonLabel} onclick={handleNext}
+                              variant="brand" disabled={isNextDisabled}>
+            </lightning-button>
+        </div>
+
+        <!-- Success State -->
+        <template if:true={isSubmitted}>
+            <div class="success-state">
+                <div class="success-icon">🎉</div>
+                <h2>Application Submitted!</h2>
+                <p>Your loan application <strong>{applicationNumber}</strong> has been submitted successfully.</p>
+                <p>You will receive updates on your registered email and mobile.</p>
+                <lightning-button label="View Application" variant="brand" onclick={viewApplication}>
+                </lightning-button>
+            </div>
+        </template>
+    </div>
+</template>

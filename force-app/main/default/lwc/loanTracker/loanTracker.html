@@ -1,0 +1,58 @@
+<template>
+    <div class="tracker-container">
+        <div class="tracker-header">
+            <h2 class="tracker-title">Application Status Tracker</h2>
+            <p class="tracker-app-number">Application No: {applicationNumber}</p>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline">
+            <template for:each={timelineStages} for:item="stage">
+                <div key={stage.id} class={stage.containerClass}>
+                    <!-- Connector line -->
+                    <div class="timeline-connector" if:false={stage.isFirst}>
+                        <div class="connector-line" data-completed={stage.prevCompleted}></div>
+                    </div>
+                    <!-- Stage node -->
+                    <div class="stage-node" data-status={stage.status}>
+                        <div class="stage-icon-wrapper">
+                            <span class="stage-icon">{stage.icon}</span>
+                        </div>
+                        <div class="stage-content">
+                            <h3 class="stage-title">{stage.title}</h3>
+                            <p class="stage-description">{stage.description}</p>
+                            <div class="stage-meta" if:true={stage.completedDate}>
+                                <span class="meta-icon">📅</span>
+                                <span class="meta-text">{stage.completedDateLabel}</span>
+                            </div>
+                            <div class="stage-badge" data-status={stage.status}>{stage.statusLabel}</div>
+                            <!-- Rejection reason -->
+                            <div class="rejection-reason" if:true={stage.rejectionReason}>
+                                <span class="rejection-icon">⚠️</span>
+                                <span class="rejection-text">{stage.rejectionReason}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- Current Status Banner -->
+        <div class="current-status-banner" data-status={currentStatus}>
+            <div class="banner-icon">{currentStatusIcon}</div>
+            <div class="banner-content">
+                <p class="banner-title">{currentStatusTitle}</p>
+                <p class="banner-message">{currentStatusMessage}</p>
+            </div>
+        </div>
+
+        <!-- Next Action for Customer -->
+        <div class="next-action-card" if:true={hasNextAction}>
+            <h3 class="next-action-title">🎯 Action Required</h3>
+            <p class="next-action-text">{nextActionText}</p>
+            <lightning-button label={nextActionLabel} variant="brand"
+                              onclick={handleNextAction}>
+            </lightning-button>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,132 @@
+<template>
+    <div class="valuation-container">
+        <div class="form-header">
+            <h2 class="form-title">Property Valuation Form</h2>
+            <p class="form-subtitle">Enter property details for market value assessment and LTV calculation.</p>
+        </div>
+
+        <!-- Property Identity -->
+        <div class="section-card">
+            <h3 class="section-title">📍 Property Location &amp; Identity</h3>
+            <div class="form-grid">
+                <lightning-combobox label="Property Type" value={propertyType}
+                                    options={propertyTypeOptions} onchange={handleChange}
+                                    data-field="propertyType" required>
+                </lightning-combobox>
+                <lightning-combobox label="Collateral Category" value={collateralCategory}
+                                    options={collateralOptions} onchange={handleChange}
+                                    data-field="collateralCategory" required>
+                </lightning-combobox>
+                <lightning-input label="Property Address" value={propertyAddress}
+                                 onchange={handleChange} data-field="propertyAddress" required>
+                </lightning-input>
+                <lightning-input label="City" value={city}
+                                 onchange={handleChange} data-field="city" required>
+                </lightning-input>
+                <lightning-input label="State" value={state}
+                                 onchange={handleChange} data-field="state" required>
+                </lightning-input>
+                <lightning-input label="Pincode" value={pincode} maxlength="6"
+                                 onchange={handleChange} data-field="pincode" required>
+                </lightning-input>
+                <lightning-combobox label="Ownership Type" value={ownershipType}
+                                    options={ownershipOptions} onchange={handleChange}
+                                    data-field="ownershipType" required>
+                </lightning-combobox>
+                <lightning-combobox label="Construction Status" value={constructionStatus}
+                                    options={constructionOptions} onchange={handleChange}
+                                    data-field="constructionStatus" required>
+                </lightning-combobox>
+            </div>
+        </div>
+
+        <!-- Area Details -->
+        <div class="section-card">
+            <h3 class="section-title">📐 Area Details</h3>
+            <div class="form-grid">
+                <lightning-input label="Property Area (Sq.Ft)" type="number"
+                                 value={propertyAreaSqFt} onchange={handleChange}
+                                 data-field="propertyAreaSqFt">
+                </lightning-input>
+                <lightning-input label="Plot Area (Sq.Ft)" type="number"
+                                 value={plotAreaSqFt} onchange={handleChange}
+                                 data-field="plotAreaSqFt">
+                </lightning-input>
+                <lightning-input label="Year of Construction" type="number"
+                                 value={yearOfConstruction} min="1950" max="2025"
+                                 onchange={handleChange} data-field="yearOfConstruction">
+                </lightning-input>
+            </div>
+        </div>
+
+        <!-- Valuation Details -->
+        <div class="section-card">
+            <h3 class="section-title">💰 Valuation Details</h3>
+            <div class="form-grid">
+                <lightning-input label="Market Value (₹)" type="number"
+                                 value={marketValue} onchange={handleValuationChange}
+                                 data-field="marketValue" required>
+                </lightning-input>
+                <lightning-input label="Forced Sale Value (₹)" type="number"
+                                 value={forcedSaleValue} onchange={handleValuationChange}
+                                 data-field="forcedSaleValue" required>
+                </lightning-input>
+                <lightning-input label="Valuation Date" type="date"
+                                 value={valuationDate} onchange={handleChange}
+                                 data-field="valuationDate" required>
+                </lightning-input>
+                <lightning-input label="Valuation Report Reference" value={valuationReportRef}
+                                 onchange={handleChange} data-field="valuationReportRef">
+                </lightning-input>
+            </div>
+
+            <!-- LTV Calculation Display -->
+            <div class="ltv-display" if:true={showLTV}>
+                <div class="ltv-card" data-flag={ltvFlag}>
+                    <div class="ltv-header">
+                        <span class="ltv-label">Loan to Value (LTV) Ratio</span>
+                        <span class="ltv-status">{ltvStatus}</span>
+                    </div>
+                    <div class="ltv-value">{ltvRatio}%</div>
+                    <div class="ltv-bar">
+                        <div class="ltv-fill" style={ltvBarStyle}></div>
+                        <span class="ltv-max-label">Max: {maxLTV}%</span>
+                    </div>
+                    <p class="ltv-calculation">
+                        Loan Amount (₹{loanAmountFormatted}) ÷ Market Value (₹{marketValueFormatted}) = {ltvRatio}%
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legal Clearance -->
+        <div class="section-card">
+            <h3 class="section-title">⚖️ Legal Clearance</h3>
+            <div class="form-grid">
+                <lightning-combobox label="Title Status" value={titleStatus}
+                                    options={titleStatusOptions} onchange={handleChange}
+                                    data-field="titleStatus" required>
+                </lightning-combobox>
+                <lightning-input label="Title Verified By" value={titleVerifiedBy}
+                                 onchange={handleChange} data-field="titleVerifiedBy">
+                </lightning-input>
+                <lightning-textarea label="Valuation Remarks" value={valuationRemarks}
+                                    onchange={handleChange} data-field="valuationRemarks"
+                                    max-length="2000">
+                </lightning-textarea>
+                <lightning-textarea label="Legal Remarks" value={legalRemarks}
+                                    onchange={handleChange} data-field="legalRemarks"
+                                    max-length="2000">
+                </lightning-textarea>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+            <lightning-button label="Save Draft" variant="neutral" onclick={saveDraft}></lightning-button>
+            <lightning-button label="Submit Valuation" variant="brand"
+                              onclick={submitValuation} disabled={isSubmitDisabled}>
+            </lightning-button>
+        </div>
+    </div>
+</template>

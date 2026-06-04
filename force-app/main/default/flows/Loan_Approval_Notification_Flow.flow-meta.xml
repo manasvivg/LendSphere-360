@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <description>Record-triggered flow that sends email notifications to the applicant when their loan application is Sanctioned (approved) or Rejected by the Branch Manager.</description>
+    <environments>Default</environments>
+    <interviewLabel>Loan Approval Notification Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Loan Approval Notification Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <object>Loan_Application__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+        <filterLogic>1 OR 2</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Sanctioned</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Rejected</stringValue>
+            </value>
+        </filters>
+        <connector>
+            <targetReference>Check_Status</targetReference>
+        </connector>
+    </start>
+    <decisions>
+        <name>Check_Status</name>
+        <label>Is Sanctioned or Rejected?</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <defaultConnectorLabel>Other Status</defaultConnectorLabel>
+        <rules>
+            <name>Is_Sanctioned</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Sanctioned</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Approval_Email</targetReference>
+            </connector>
+            <label>Is Sanctioned</label>
+        </rules>
+        <rules>
+            <name>Is_Rejected</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Rejected</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Rejection_Email</targetReference>
+            </connector>
+            <label>Is Rejected</label>
+        </rules>
+    </decisions>
+    <actionCalls>
+        <name>Send_Approval_Email</name>
+        <label>Send Approval Email</label>
+        <locationX>56</locationX>
+        <locationY>278</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.Applicant__r.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <stringValue>🎉 Congratulations! Your Loan has been Sanctioned</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <stringValue>Dear Customer,
+
+We are pleased to inform you that your loan application has been sanctioned!
+
+Please log in to the LendSphere Customer Portal to review your sanction letter and set up your repayment mandate.
+
+Regards,
+LendSphere 360 Team</stringValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Rejection_Email</name>
+        <label>Send Rejection Email</label>
+        <locationX>296</locationX>
+        <locationY>278</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.Applicant__r.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <stringValue>Update on Your Loan Application</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <stringValue>Dear Customer,
+
+We regret to inform you that we are unable to proceed with your loan application at this time.
+
+If you have any questions, please contact our support team or visit your nearest branch.
+
+Regards,
+LendSphere 360 Team</stringValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <status>Active</status>
+</Flow>

@@ -1,0 +1,106 @@
+<template>
+    <div class="credit-viewer-container">
+        <!-- Header -->
+        <div class="viewer-header">
+            <h2 class="viewer-title">Credit Assessment</h2>
+            <p class="viewer-subtitle">Bureau: {assessment.Bureau_Reference__c} · Pulled: {assessmentDate}</p>
+        </div>
+
+        <!-- Score Gauge -->
+        <div class="gauge-section">
+            <div class="gauge-wrapper">
+                <svg class="gauge-svg" viewBox="0 0 200 110">
+                    <!-- Background arc -->
+                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e0e0e0" stroke-width="16" stroke-linecap="round"/>
+                    <!-- Score arc (colored based on grade) -->
+                    <path d={scoreArcPath} fill="none" stroke={gradeColor} stroke-width="16" stroke-linecap="round"/>
+                    <!-- Score text -->
+                    <text x="100" y="90" text-anchor="middle" class="score-text">{creditScore}</text>
+                    <text x="100" y="108" text-anchor="middle" class="score-label-text">Credit Score</text>
+                </svg>
+            </div>
+            <!-- Grade Badge -->
+            <div class="grade-badge" style={gradeBadgeStyle}>
+                <span class="grade-label">Grade {riskGrade}</span>
+                <span class="grade-description">{gradeDescription}</span>
+            </div>
+            <!-- Score Range Labels -->
+            <div class="score-range-labels">
+                <span class="range-label bad">300</span>
+                <span class="range-label poor">500</span>
+                <span class="range-label fair">650</span>
+                <span class="range-label good">700</span>
+                <span class="range-label excellent">750</span>
+                <span class="range-label max">900</span>
+            </div>
+        </div>
+
+        <!-- Risk Factors -->
+        <div class="risk-factors-section">
+            <h3>Credit Profile</h3>
+            <div class="factor-grid">
+                <div class="factor-card">
+                    <div class="factor-icon">🏦</div>
+                    <div class="factor-content">
+                        <p class="factor-label">Active Accounts</p>
+                        <p class="factor-value">{assessment.Total_Active_Accounts__c}</p>
+                    </div>
+                    <div class="factor-status good">Good</div>
+                </div>
+                <div class="factor-card" data-status={overdueStatus}>
+                    <div class="factor-icon">⚠️</div>
+                    <div class="factor-content">
+                        <p class="factor-label">Overdue Accounts</p>
+                        <p class="factor-value">{assessment.Overdue_Accounts__c}</p>
+                    </div>
+                    <div class="factor-status" data-flag={overdueFlag}>{overdueLabel}</div>
+                </div>
+                <div class="factor-card">
+                    <div class="factor-icon">💰</div>
+                    <div class="factor-content">
+                        <p class="factor-label">Total Outstanding</p>
+                        <p class="factor-value">₹{totalOutstandingFormatted}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analyst Decision -->
+        <div class="analyst-section" if:true={hasAnalystDecision}>
+            <h3>Analyst Review</h3>
+            <div class="decision-row">
+                <div class="decision-badge" data-decision={assessment.Analyst_Decision__c}>
+                    {assessment.Analyst_Decision__c}
+                </div>
+                <div class="decision-details">
+                    <p class="decision-reviewer">Reviewed by: {assessment.Reviewed_By__r.Name}</p>
+                    <p class="decision-remarks">{assessment.Analyst_Remarks__c}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analyst Action Panel -->
+        <div class="analyst-action-panel" if:false={hasAnalystDecision}>
+            <h3>Submit Decision</h3>
+            <lightning-combobox
+                label="Decision"
+                value={analystDecision}
+                options={decisionOptions}
+                onchange={handleDecisionChange}
+                required>
+            </lightning-combobox>
+            <lightning-textarea
+                label="Remarks"
+                value={analystRemarks}
+                onchange={handleRemarksChange}
+                max-length="1000">
+            </lightning-textarea>
+            <lightning-button
+                label="Submit Decision"
+                variant="brand"
+                onclick={submitDecision}
+                disabled={isSubmitting}>
+            </lightning-button>
+        </div>
+    </div>
+</template>

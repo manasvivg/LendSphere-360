@@ -1,0 +1,135 @@
+<template>
+    <div class="collections-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="header-left">
+                <h1 class="dashboard-title">Collections Dashboard</h1>
+                <p class="dashboard-date">As of {todayDate}</p>
+            </div>
+            <div class="header-right">
+                <lightning-button label="Run Collections Batch" variant="brand"
+                                  onclick={runBatch} disabled={isBatchRunning}>
+                </lightning-button>
+                <lightning-button label="Refresh" variant="neutral" onclick={refreshData}>
+                </lightning-button>
+            </div>
+        </div>
+
+        <!-- Portfolio Summary KPIs -->
+        <div class="kpi-row">
+            <div class="kpi-tile overdue-tile">
+                <p class="kpi-label">Total Overdue</p>
+                <p class="kpi-value red">₹{totalOverdueFormatted}</p>
+                <p class="kpi-sub">{totalOverdueCount} accounts</p>
+            </div>
+            <div class="kpi-tile bucket1-tile">
+                <p class="kpi-label">Bucket 1 (1–30 DPD)</p>
+                <p class="kpi-value orange">₹{bucket1AmountFormatted}</p>
+                <p class="kpi-sub">{bucket1Count} accounts</p>
+            </div>
+            <div class="kpi-tile bucket2-tile">
+                <p class="kpi-label">Bucket 2 (31–60 DPD)</p>
+                <p class="kpi-value amber">{bucket2AmountFormatted}</p>
+                <p class="kpi-sub">{bucket2Count} accounts</p>
+            </div>
+            <div class="kpi-tile bucket3-tile">
+                <p class="kpi-label">Bucket 3 (61–90 DPD)</p>
+                <p class="kpi-value red-dark">₹{bucket3AmountFormatted}</p>
+                <p class="kpi-sub">{bucket3Count} accounts</p>
+            </div>
+            <div class="kpi-tile npa-tile">
+                <p class="kpi-label">NPA (90+ DPD)</p>
+                <p class="kpi-value dark-red">₹{npaAmountFormatted}</p>
+                <p class="kpi-sub">{npaCount} accounts</p>
+            </div>
+        </div>
+
+        <!-- DPD Aging Bar Chart (CSS) -->
+        <div class="section-card">
+            <h2 class="section-title">DPD Aging Distribution</h2>
+            <div class="bar-chart">
+                <div class="bar-item">
+                    <div class="bar-track">
+                        <div class="bar-fill bucket1-color" style={bucket1BarStyle}></div>
+                    </div>
+                    <span class="bar-label">1–30 DPD</span>
+                    <span class="bar-count">{bucket1Count}</span>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-track">
+                        <div class="bar-fill bucket2-color" style={bucket2BarStyle}></div>
+                    </div>
+                    <span class="bar-label">31–60 DPD</span>
+                    <span class="bar-count">{bucket2Count}</span>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-track">
+                        <div class="bar-fill bucket3-color" style={bucket3BarStyle}></div>
+                    </div>
+                    <span class="bar-label">61–90 DPD</span>
+                    <span class="bar-count">{bucket3Count}</span>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-track">
+                        <div class="bar-fill npa-color" style={npaBarStyle}></div>
+                    </div>
+                    <span class="bar-label">90+ DPD (NPA)</span>
+                    <span class="bar-count">{npaCount}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Collection Cases Table -->
+        <div class="section-card">
+            <div class="section-header">
+                <h2 class="section-title">Collection Cases</h2>
+                <div class="filter-section">
+                    <lightning-combobox label="" placeholder="Filter by Bucket"
+                                        value={selectedBucket}
+                                        options={bucketFilterOptions}
+                                        onchange={handleBucketFilter}>
+                    </lightning-combobox>
+                    <lightning-combobox label="" placeholder="Filter by Status"
+                                        value={selectedStatus}
+                                        options={statusFilterOptions}
+                                        onchange={handleStatusFilter}>
+                    </lightning-combobox>
+                </div>
+            </div>
+            <lightning-datatable
+                data={filteredCases}
+                columns={caseColumns}
+                key-field="Id"
+                onrowaction={handleRowAction}
+                row-number-offset={rowOffset}>
+            </lightning-datatable>
+        </div>
+
+        <!-- Quick Actions Modal -->
+        <template if:true={showActionModal}>
+            <div class="modal-overlay" onclick={closeModal}>
+                <div class="modal-card" onclick={stopPropagation}>
+                    <div class="modal-header">
+                        <h3>Case Actions — {selectedCase.Name}</h3>
+                        <button class="modal-close" onclick={closeModal}>✕</button>
+                    </div>
+                    <div class="modal-body">
+                        <lightning-input type="date" label="Promise to Pay Date"
+                                         value={promiseToPay} onchange={handlePTPChange}>
+                        </lightning-input>
+                        <lightning-textarea label="Contact Remarks" value={contactRemarks}
+                                            onchange={handleRemarksChange} max-length="500">
+                        </lightning-textarea>
+                        <lightning-combobox label="Action" value={selectedAction}
+                                            options={actionOptions} onchange={handleActionSelect}>
+                        </lightning-combobox>
+                    </div>
+                    <div class="modal-footer">
+                        <lightning-button label="Cancel" variant="neutral" onclick={closeModal}></lightning-button>
+                        <lightning-button label="Save" variant="brand" onclick={saveAction}></lightning-button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

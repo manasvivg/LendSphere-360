@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <description>Record-triggered flow that publishes KYC_Completed__e platform event when KYC Request status transitions to 'Verified'. This triggers the Credit Assessment process.</description>
+    <environments>Default</environments>
+    <interviewLabel>KYC Completion Event Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>KYC Completion Event Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>56</locationX>
+        <locationY>0</locationY>
+        <object>KYC_Request__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>KYC_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Verified</stringValue>
+            </value>
+        </filters>
+        <connector>
+            <targetReference>Publish_KYC_Completed_Event</targetReference>
+        </connector>
+    </start>
+    <actionCalls>
+        <name>Publish_KYC_Completed_Event</name>
+        <label>Publish KYC Completed Event</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <actionName>KYC_Completed__e</actionName>
+        <actionType>eventCreation</actionType>
+        <inputParameters>
+            <name>Loan_Application_Id__c</name>
+            <value>
+                <elementReference>$Record.Loan_Application__c</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>KYC_Request_Id__c</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Verified_Date__c</name>
+            <value>
+                <elementReference>$Record.Verified_Date__c</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <status>Active</status>
+</Flow>

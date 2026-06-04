@@ -1,0 +1,117 @@
+<template>
+    <div class="calculator-container">
+        <div class="calc-header">
+            <h2 class="calc-title">EMI Calculator</h2>
+            <p class="calc-subtitle">Calculate your monthly EMI instantly</p>
+        </div>
+
+        <!-- Input Section -->
+        <div class="inputs-section">
+            <!-- Loan Amount Slider -->
+            <div class="slider-group">
+                <div class="slider-label-row">
+                    <label class="slider-label">Loan Amount</label>
+                    <div class="slider-value-display">
+                        <span class="currency-symbol">₹</span>
+                        <input type="number" class="value-input" value={loanAmount}
+                               min="10000" max="50000000" step="10000"
+                               onchange={handleAmountInput}>
+                    </div>
+                </div>
+                <input type="range" class="slider" value={loanAmount}
+                       min="10000" max="50000000" step="10000"
+                       onchange={handleAmountSlider}>
+                <div class="slider-range-labels">
+                    <span>₹10K</span>
+                    <span>₹5Cr</span>
+                </div>
+            </div>
+
+            <!-- Interest Rate Slider -->
+            <div class="slider-group">
+                <div class="slider-label-row">
+                    <label class="slider-label">Interest Rate (p.a.)</label>
+                    <div class="slider-value-display">
+                        <input type="number" class="value-input" value={interestRate}
+                               min="6" max="30" step="0.1"
+                               onchange={handleRateInput}>
+                        <span class="unit-symbol">%</span>
+                    </div>
+                </div>
+                <input type="range" class="slider" value={interestRate}
+                       min="6" max="30" step="0.1"
+                       onchange={handleRateSlider}>
+                <div class="slider-range-labels">
+                    <span>6%</span>
+                    <span>30%</span>
+                </div>
+            </div>
+
+            <!-- Tenure Slider -->
+            <div class="slider-group">
+                <div class="slider-label-row">
+                    <label class="slider-label">Tenure</label>
+                    <div class="slider-value-display">
+                        <input type="number" class="value-input" value={tenureMonths}
+                               min="6" max="360" step="6"
+                               onchange={handleTenureInput}>
+                        <span class="unit-symbol">mo</span>
+                    </div>
+                </div>
+                <input type="range" class="slider" value={tenureMonths}
+                       min="6" max="360" step="6"
+                       onchange={handleTenureSlider}>
+                <div class="slider-range-labels">
+                    <span>6 mo</span>
+                    <span>360 mo (30 yr)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section">
+            <!-- EMI Card -->
+            <div class="emi-result-card">
+                <p class="emi-label">Monthly EMI</p>
+                <p class="emi-amount">₹{monthlyEMI}</p>
+                <p class="emi-tenure-label">for {tenureMonths} months</p>
+            </div>
+
+            <!-- Breakdown -->
+            <div class="breakdown-grid">
+                <div class="breakdown-card principal">
+                    <div class="breakdown-dot principal-dot"></div>
+                    <p class="breakdown-label">Principal Amount</p>
+                    <p class="breakdown-value">₹{principalFormatted}</p>
+                </div>
+                <div class="breakdown-card interest">
+                    <div class="breakdown-dot interest-dot"></div>
+                    <p class="breakdown-label">Total Interest</p>
+                    <p class="breakdown-value">₹{totalInterestFormatted}</p>
+                </div>
+                <div class="breakdown-card total">
+                    <div class="breakdown-dot total-dot"></div>
+                    <p class="breakdown-label">Total Amount Payable</p>
+                    <p class="breakdown-value">₹{totalPayableFormatted}</p>
+                </div>
+            </div>
+
+            <!-- Donut Chart (CSS only) -->
+            <div class="donut-chart-wrapper">
+                <div class="donut-chart" style={donutStyle}>
+                    <div class="donut-hole">
+                        <p class="donut-label">Interest</p>
+                        <p class="donut-percent">{interestPercent}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Apply Button -->
+        <div class="calc-actions">
+            <lightning-button label="Apply for this Loan" variant="brand"
+                              onclick={applyNow}>
+            </lightning-button>
+        </div>
+    </div>
+</template>
