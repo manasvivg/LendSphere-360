@@ -118,7 +118,6 @@ public with sharing class LoanApplicationService {
 
         for (Loan_Application__c app : newApps) {
             kycRequests.add(new KYC_Request__c(
-                Name              = 'KYC-' + app.Name,
                 Loan_Application__c = app.Id,
                 KYC_Status__c     = 'Pending'
             ));

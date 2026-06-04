@@ -35,13 +35,25 @@ public with sharing class EncryptionUtil {
         if (encryptionKey == null) {
             // Retrieve the base64-encoded key from a Protected Custom Setting
             // (never hardcode keys in Apex source)
-            EncryptionConfig__c config = EncryptionConfig__c.getInstance();
-            if (config == null || String.isBlank(config.Base64_Key__c)) {
+            // EncryptionConfig__c must be created in Setup > Custom Settings
+            // with a Protected field: Base64_Key__c (Text 64)
+            try {
+                SObject config = Database.query(
+                    'SELECT Base64_Key__c FROM EncryptionConfig__c LIMIT 1'
+                );
+                String keyVal = (String) config.get('Base64_Key__c');
+                if (String.isBlank(keyVal)) {
+                    throw new EncryptionException(
+                        'EncryptionConfig__c.Base64_Key__c is blank. Please configure the Custom Setting.'
+                    );
+                }
+                encryptionKey = EncodingUtil.base64Decode(keyVal);
+            } catch (QueryException qe) {
                 throw new EncryptionException(
-                    'EncryptionConfig__c is not configured. Please set up Base64_Key__c in the Custom Setting.'
+                    'EncryptionConfig__c Custom Setting is not deployed. ' +
+                    'Create it in Setup > Custom Settings with field Base64_Key__c (Text 64).'
                 );
             }
-            encryptionKey = EncodingUtil.base64Decode(config.Base64_Key__c);
         }
         return encryptionKey;
     }

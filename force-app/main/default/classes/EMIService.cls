@@ -98,9 +98,7 @@ public with sharing class EMIService {
             balance = (balance - principalComponent).setScale(2, RoundingMode.HALF_UP);
 
             rows.add(new EMI_Schedule__c(
-                Name                    = app.Loan_Application__r != null
-                                          ? 'EMI-' + String.valueOf(i).leftPad(3, '0')
-                                          : 'EMI-' + String.valueOf(i).leftPad(3, '0'),
+                Name                    = 'EMI-' + String.valueOf(i).leftPad(3, '0'),
                 Loan_Application__c     = disb.Loan_Application__c,
                 Disbursement__c         = disb.Id,
                 EMI_Number__c           = i,

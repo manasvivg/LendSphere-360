@@ -154,5 +154,35 @@
         <members>Application_Log__c.Log_Timestamp__c</members>
         <name>CustomField</name>
     </types>
+    <types>
+        <!-- Phase 3: Apex Classes -->
+        <members>TriggerHandler</members>
+        <members>ApplicationLogger</members>
+        <members>EncryptionUtil</members>
+        <members>LoanApplicationService</members>
+        <members>KYCService</members>
+        <members>CreditService</members>
+        <members>PropertyValuationService</members>
+        <members>DisbursementService</members>
+        <members>EMIService</members>
+        <members>CollectionsService</members>
+        <members>EMIGenerationQueueable</members>
+        <members>CollectionsBatch</members>
+        <members>LoanApplicationTriggerHandler</members>
+        <members>KYCRequestTriggerHandler</members>
+        <members>CreditAssessmentTriggerHandler</members>
+        <members>PropertyDetailTriggerHandler</members>
+        <members>DisbursementTriggerHandler</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <!-- Phase 3: Apex Triggers -->
+        <members>LoanApplicationTrigger</members>
+        <members>KYCRequestTrigger</members>
+        <members>CreditAssessmentTrigger</members>
+        <members>PropertyDetailTrigger</members>
+        <members>DisbursementTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
     <version>59.0</version>
 </Package>
