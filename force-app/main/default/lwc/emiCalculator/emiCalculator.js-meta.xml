@@ -12,7 +12,7 @@
             <property name="defaultAmount"   type="Integer" label="Default Loan Amount"   default="1000000"/>
             <property name="defaultRate"     type="String"  label="Default Interest Rate" default="10.5"   />
             <property name="defaultTenure"   type="Integer" label="Default Tenure (Months)" default="120"  />
-            <property name="showApplyButton" type="Boolean" label="Show Apply Button"     default="true"   />
+            <property name="showApplyButton" type="Boolean" label="Show Apply Button"     default="false"  />
         </targetConfig>
     </targetConfigs>
     <description>Real-time EMI calculator with sliders for loan amount, interest rate, and tenure. Displays monthly EMI, total interest, and a principal vs. interest donut chart.</description>

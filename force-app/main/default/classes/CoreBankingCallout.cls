@@ -31,8 +31,8 @@ public with sharing class CoreBankingCallout implements Queueable, Database.Allo
     public void execute(QueueableContext ctx) {
         Loan_Application__c app = queryLoanApplication();
         if (app == null) {
-            ApplicationLogger.logError(MODULE, CLASS_NAME, 'execute',
-                'Loan Application not found: ' + loanApplicationId, loanApplicationId);
+            ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, 'execute',
+                'Loan Application not found: ' + loanApplicationId, String.valueOf(loanApplicationId));
             return;
         }
 
@@ -135,9 +135,9 @@ public with sharing class CoreBankingCallout implements Queueable, Database.Allo
         );
         EventBus.publish(event);
 
-        ApplicationLogger.logInfo(MODULE, CLASS_NAME, 'handleSuccess',
+        ApplicationLogger.log(ApplicationLogger.LEVEL_INFO, MODULE, 'handleSuccess',
             'Disbursement completed. UTR: ' + utrNumber + ', Account: ' + loanAccountNo,
-            loanApplicationId);
+            String.valueOf(loanApplicationId));
     }
 
     private void handleFailure(Loan_Application__c app, String reason) {
@@ -155,8 +155,8 @@ public with sharing class CoreBankingCallout implements Queueable, Database.Allo
             Status__c = 'Sanctioned'
         );
 
-        ApplicationLogger.logError(MODULE, CLASS_NAME, 'handleFailure',
-            'Disbursement failed: ' + reason, loanApplicationId);
+        ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, 'handleFailure',
+            'Disbursement failed: ' + reason, String.valueOf(loanApplicationId));
     }
 
     private static Decimal getDecimal(Map<String, Object> m, String key) {

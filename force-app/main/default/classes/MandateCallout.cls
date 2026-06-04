@@ -56,8 +56,8 @@ public with sharing class MandateCallout implements Queueable, Database.AllowsCa
             handleSuccess(res, mandate);
         } else {
             updateMandateStatus(mandateId, 'Failed', null);
-            ApplicationLogger.logError(MODULE, CLASS_NAME, 'execute',
-                'Mandate API returned HTTP ' + res.getStatusCode(), mandateId);
+            ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, 'execute',
+                'Mandate API returned HTTP ' + res.getStatusCode(), String.valueOf(mandateId));
         }
     }
 

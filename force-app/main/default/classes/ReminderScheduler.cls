@@ -30,7 +30,7 @@ public with sharing class ReminderScheduler implements Schedulable {
         ];
 
         if (upcomingEMIs.isEmpty()) {
-            ApplicationLogger.logInfo(MODULE, CLASS_NAME, 'execute',
+            ApplicationLogger.log(ApplicationLogger.LEVEL_INFO, MODULE, 'execute',
                 'No EMIs due on ' + reminderDate + '. No reminders sent.', null);
             return;
         }
@@ -54,10 +54,10 @@ public with sharing class ReminderScheduler implements Schedulable {
         if (!emails.isEmpty()) {
             try {
                 Messaging.sendEmail(emails);
-                ApplicationLogger.logInfo(MODULE, CLASS_NAME, 'execute',
+                ApplicationLogger.log(ApplicationLogger.LEVEL_INFO, MODULE, 'execute',
                     'EMI reminders sent for ' + emails.size() + ' customers.', null);
             } catch (Exception ex) {
-                ApplicationLogger.logError(MODULE, CLASS_NAME, 'execute',
+                ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, 'execute',
                     'Email send failed: ' + ex.getMessage(), null);
             }
         }

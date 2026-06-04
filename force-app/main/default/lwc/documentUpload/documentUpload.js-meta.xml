@@ -14,8 +14,6 @@
             </objects>
         </targetConfig>
         <targetConfig targets="lightningCommunity__Page">
-            <property name="title" type="String" label="Upload Section Title"/>
-            <property name="subtitle" type="String" label="Upload Section Subtitle"/>
         </targetConfig>
     </targetConfigs>
     <description>Reusable drag-and-drop document upload component with file validation, progress tracking, and existing document listing.</description>

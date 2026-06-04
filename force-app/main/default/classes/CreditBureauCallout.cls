@@ -29,8 +29,8 @@ public with sharing class CreditBureauCallout implements Queueable, Database.All
     public void execute(QueueableContext ctx) {
         Loan_Application__c app = queryLoanApplication();
         if (app == null) {
-            ApplicationLogger.logError(MODULE, CLASS_NAME, 'execute',
-                'Loan Application not found: ' + loanApplicationId, loanApplicationId);
+            ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, 'execute',
+                'Loan Application not found: ' + loanApplicationId, String.valueOf(loanApplicationId));
             return;
         }
 
@@ -39,9 +39,9 @@ public with sharing class CreditBureauCallout implements Queueable, Database.All
         try {
             res = new Http().send(req);
         } catch (Exception ex) {
-            CalloutLogger.logException(ex, MODULE, CLASS_NAME, 'execute', loanApplicationId);
-            ApplicationLogger.logError(MODULE, CLASS_NAME, 'execute',
-                'HTTP callout exception: ' + ex.getMessage(), loanApplicationId);
+            CalloutLogger.logException(ex, MODULE, CLASS_NAME, 'execute', String.valueOf(loanApplicationId));
+            ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, 'execute',
+                'HTTP callout exception: ' + ex.getMessage(), String.valueOf(loanApplicationId));
             return;
         }
 
@@ -50,8 +50,8 @@ public with sharing class CreditBureauCallout implements Queueable, Database.All
         if (res.getStatusCode() == 200) {
             handleSuccess(res, app);
         } else {
-            ApplicationLogger.logError(MODULE, CLASS_NAME, 'execute',
-                'Credit Bureau API returned HTTP ' + res.getStatusCode(), loanApplicationId);
+            ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, 'execute',
+                'Credit Bureau API returned HTTP ' + res.getStatusCode(), String.valueOf(loanApplicationId));
         }
     }
 
@@ -118,9 +118,9 @@ public with sharing class CreditBureauCallout implements Queueable, Database.All
         );
         EventBus.publish(event);
 
-        ApplicationLogger.logInfo(MODULE, CLASS_NAME, 'handleSuccess',
+        ApplicationLogger.log(ApplicationLogger.LEVEL_INFO, MODULE, 'handleSuccess',
             'Credit assessment created. Score: ' + creditScore + ', Grade: ' + riskGrade,
-            loanApplicationId);
+            String.valueOf(loanApplicationId));
     }
 
     /**
