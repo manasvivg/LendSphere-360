@@ -13,6 +13,10 @@
         <members>Collection_Case__c</members>
         <members>Application_Log__c</members>
         <members>Loan_Config__mdt</members>
+        <!-- Phase 4: Platform Event SObject definitions -->
+        <members>Credit_Assessment_Completed__e</members>
+        <members>Mandate_Activated__e</members>
+        <members>Loan_Disbursed__e</members>
         <name>CustomObject</name>
     </types>
     <types>
@@ -225,13 +229,10 @@
         <name>PermissionSet</name>
     </types>
     <types>
-        <!-- Phase 4: Platform Event Channels -->
+        <!-- Phase 4: Platform Event Channels (Pub/Sub API) -->
         <members>Application_Submitted__e</members>
         <members>KYC_Completed__e</members>
         <members>Credit_Assessment_Completed__e</members>
-        <members>Loan_Approved__e</members>
-        <members>Mandate_Activated__e</members>
-        <members>Loan_Disbursed__e</members>
         <name>PlatformEventChannel</name>
     </types>
     <types>

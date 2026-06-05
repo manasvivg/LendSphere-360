@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>59.0</apiVersion>
-    <description>Customer-facing screen flow for setting up UPI or eNACH mandate. Guides the customer through selecting mandate type, entering payment details, and confirming setup.</description>
+    <description>Customer-facing screen flow for setting up UPI or eNACH mandate.</description>
     <environments>Default</environments>
     <interviewLabel>Mandate Setup Screen Flow {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Mandate Setup Screen Flow</label>
@@ -12,6 +12,7 @@
         </value>
     </processMetadataValues>
     <processType>Flow</processType>
+    <status>Active</status>
     <variables>
         <name>loanApplicationId</name>
         <dataType>String</dataType>
@@ -63,6 +64,7 @@
             <stringValue>eNACH</stringValue>
         </value>
     </choices>
+    <!-- ═══ ALL SCREENS GROUPED TOGETHER ═══ -->
     <screens>
         <name>Step1_Select_Mandate_Type</name>
         <label>Step 1 - Choose Mandate Type</label>
@@ -72,7 +74,7 @@
         <allowFinish>false</allowFinish>
         <allowPause>false</allowPause>
         <connector>
-            <targetReference>Check_Mandate_Type</targetReference>
+            <targetReference>Assign_Mandate_Type</targetReference>
         </connector>
         <fields>
             <name>Mandate_Type_Choice</name>
@@ -82,17 +84,132 @@
             <fieldText>Select Repayment Method</fieldText>
             <fieldType>RadioButtons</fieldType>
             <isRequired>true</isRequired>
-            <outputMappings>
-                <assignToReference>mandateType</assignToReference>
-                <name>value</name>
-            </outputMappings>
         </fields>
     </screens>
+    <screens>
+        <name>Step2a_UPI_Details</name>
+        <label>Step 2a - UPI Details</label>
+        <locationX>56</locationX>
+        <locationY>494</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Assign_VPA</targetReference>
+        </connector>
+        <fields>
+            <name>VPA_Input</name>
+            <dataType>String</dataType>
+            <fieldText>UPI ID (VPA)</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+    </screens>
+    <screens>
+        <name>Step2b_eNACH_Details</name>
+        <label>Step 2b - Bank Account Details</label>
+        <locationX>296</locationX>
+        <locationY>494</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Assign_Bank_Details</targetReference>
+        </connector>
+        <fields>
+            <name>Bank_Account_Input</name>
+            <dataType>String</dataType>
+            <fieldText>Bank Account Number</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>IFSC_Input</name>
+            <dataType>String</dataType>
+            <fieldText>IFSC Code</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+    </screens>
+    <screens>
+        <name>Step3_Confirmation</name>
+        <label>Step 3 - Confirm and Submit</label>
+        <locationX>176</locationX>
+        <locationY>746</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_Mandate_Record</targetReference>
+        </connector>
+        <fields>
+            <name>Confirmation_Display</name>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>You are setting up a mandate for automatic EMI deduction. Click Finish to authorize and submit your mandate request.</fieldText>
+        </fields>
+    </screens>
+    <!-- ═══ ALL ASSIGNMENTS GROUPED TOGETHER ═══ -->
+    <assignments>
+        <name>Assign_Mandate_Type</name>
+        <label>Assign Mandate Type</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>mandateType</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Mandate_Type_Choice</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Check_Mandate_Type</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_VPA</name>
+        <label>Assign VPA</label>
+        <locationX>56</locationX>
+        <locationY>602</locationY>
+        <assignmentItems>
+            <assignToReference>vpaAddress</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>VPA_Input</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Step3_Confirmation</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_Bank_Details</name>
+        <label>Assign Bank Details</label>
+        <locationX>296</locationX>
+        <locationY>602</locationY>
+        <assignmentItems>
+            <assignToReference>bankAccount</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Bank_Account_Input</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>ifscCode</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>IFSC_Input</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Step3_Confirmation</targetReference>
+        </connector>
+    </assignments>
+    <!-- ═══ DECISIONS ═══ -->
     <decisions>
         <name>Check_Mandate_Type</name>
         <label>UPI or eNACH?</label>
         <locationX>176</locationX>
-        <locationY>278</locationY>
+        <locationY>350</locationY>
         <defaultConnector>
             <targetReference>Step2b_eNACH_Details</targetReference>
         </defaultConnector>
@@ -113,86 +230,12 @@
             <label>Is UPI</label>
         </rules>
     </decisions>
-    <screens>
-        <name>Step2a_UPI_Details</name>
-        <label>Step 2a - UPI Details</label>
-        <locationX>56</locationX>
-        <locationY>422</locationY>
-        <allowBack>true</allowBack>
-        <allowFinish>false</allowFinish>
-        <allowPause>false</allowPause>
-        <connector>
-            <targetReference>Step3_Confirmation</targetReference>
-        </connector>
-        <fields>
-            <name>VPA_Input</name>
-            <dataType>String</dataType>
-            <fieldText>UPI ID (VPA)</fieldText>
-            <fieldType>InputField</fieldType>
-            <isRequired>true</isRequired>
-            <outputMappings>
-                <assignToReference>vpaAddress</assignToReference>
-                <name>value</name>
-            </outputMappings>
-        </fields>
-    </screens>
-    <screens>
-        <name>Step2b_eNACH_Details</name>
-        <label>Step 2b - Bank Account Details</label>
-        <locationX>296</locationX>
-        <locationY>422</locationY>
-        <allowBack>true</allowBack>
-        <allowFinish>false</allowFinish>
-        <allowPause>false</allowPause>
-        <connector>
-            <targetReference>Step3_Confirmation</targetReference>
-        </connector>
-        <fields>
-            <name>Bank_Account_Input</name>
-            <dataType>String</dataType>
-            <fieldText>Bank Account Number</fieldText>
-            <fieldType>InputField</fieldType>
-            <isRequired>true</isRequired>
-            <outputMappings>
-                <assignToReference>bankAccount</assignToReference>
-                <name>value</name>
-            </outputMappings>
-        </fields>
-        <fields>
-            <name>IFSC_Input</name>
-            <dataType>String</dataType>
-            <fieldText>IFSC Code</fieldText>
-            <fieldType>InputField</fieldType>
-            <isRequired>true</isRequired>
-            <outputMappings>
-                <assignToReference>ifscCode</assignToReference>
-                <name>value</name>
-            </outputMappings>
-        </fields>
-    </screens>
-    <screens>
-        <name>Step3_Confirmation</name>
-        <label>Step 3 - Confirm and Submit</label>
-        <locationX>176</locationX>
-        <locationY>566</locationY>
-        <allowBack>true</allowBack>
-        <allowFinish>true</allowFinish>
-        <allowPause>false</allowPause>
-        <connector>
-            <targetReference>Create_Mandate_Record</targetReference>
-        </connector>
-        <fields>
-            <name>Confirmation_Display</name>
-            <fieldType>DisplayText</fieldType>
-            <fieldText>You are setting up a mandate for automatic EMI deduction.
-Click Finish to authorize and submit your mandate request.</fieldText>
-        </fields>
-    </screens>
+    <!-- ═══ RECORD CREATES ═══ -->
     <recordCreates>
         <name>Create_Mandate_Record</name>
         <label>Create Mandate Record</label>
         <locationX>176</locationX>
-        <locationY>710</locationY>
+        <locationY>854</locationY>
         <inputAssignments>
             <field>Loan_Application__c</field>
             <value>
@@ -231,6 +274,7 @@ Click Finish to authorize and submit your mandate request.</fieldText>
         </inputAssignments>
         <object>Mandate__c</object>
     </recordCreates>
+    <!-- ═══ START ═══ -->
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
@@ -238,5 +282,4 @@ Click Finish to authorize and submit your mandate request.</fieldText>
             <targetReference>Step1_Select_Mandate_Type</targetReference>
         </connector>
     </start>
-    <status>Active</status>
 </Flow>

@@ -59,7 +59,7 @@ public with sharing class CreditBureauCallout implements Queueable, Database.All
 
     private Loan_Application__c queryLoanApplication() {
         List<Loan_Application__c> apps = [
-            SELECT Id, Applicant__c, Applicant__r.PAN__c,
+            SELECT Id, Applicant__c,
                    Loan_Amount__c, Loan_Product__c
             FROM   Loan_Application__c
             WHERE  Id = :loanApplicationId
@@ -69,11 +69,10 @@ public with sharing class CreditBureauCallout implements Queueable, Database.All
     }
 
     private HttpRequest buildRequest(Loan_Application__c app) {
-        // Build request payload — PAN is the key identifier for Bureau lookup
         Map<String, Object> payload = new Map<String, Object>{
-            'pan'         => app.Applicant__r.PAN__c,
-            'loan_amount' => app.Loan_Amount__c,
-            'reference'   => app.Id
+            'applicant_id' => app.Applicant__c,
+            'loan_amount'  => app.Loan_Amount__c,
+            'reference'    => app.Id
         };
 
         HttpRequest req = new HttpRequest();

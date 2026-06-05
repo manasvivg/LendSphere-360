@@ -31,8 +31,8 @@ public with sharing class MandateCallout implements Queueable, Database.AllowsCa
     public void execute(QueueableContext ctx) {
         Mandate__c mandate = queryMandate();
         if (mandate == null) {
-            ApplicationLogger.logError(MODULE, CLASS_NAME, 'execute',
-                'Mandate record not found: ' + mandateId, mandateId);
+            ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, 'execute',
+                'Mandate record not found: ' + mandateId, String.valueOf(mandateId));
             return;
         }
 
@@ -143,8 +143,8 @@ public with sharing class MandateCallout implements Queueable, Database.AllowsCa
         );
         EventBus.publish(event);
 
-        ApplicationLogger.logInfo(MODULE, CLASS_NAME, 'handleSuccess',
-            'Mandate activated. Provider Ref: ' + providerRef, mandateId);
+        ApplicationLogger.log(ApplicationLogger.LEVEL_INFO, MODULE, 'handleSuccess',
+            'Mandate activated. Provider Ref: ' + providerRef, String.valueOf(mandateId));
     }
 
     /**

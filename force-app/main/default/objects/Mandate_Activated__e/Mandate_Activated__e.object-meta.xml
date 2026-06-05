@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Mandate Activated</label>
+    <pluralLabel>Mandate Activated</pluralLabel>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <eventType>HighVolume</eventType>
+    <fields>
+        <fullName>Mandate_Id__c</fullName>
+        <label>Mandate Id</label>
+        <type>Text</type>
+        <length>18</length>
+    </fields>
+    <fields>
+        <fullName>Loan_Application_Id__c</fullName>
+        <label>Loan Application Id</label>
+        <type>Text</type>
+        <length>18</length>
+    </fields>
+    <fields>
+        <fullName>Provider_Reference__c</fullName>
+        <label>Provider Reference</label>
+        <type>Text</type>
+        <length>100</length>
+    </fields>
+    <fields>
+        <fullName>Mandate_Type__c</fullName>
+        <label>Mandate Type</label>
+        <type>Text</type>
+        <length>20</length>
+    </fields>
+</CustomObject>

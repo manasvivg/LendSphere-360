@@ -12,6 +12,14 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <status>Active</status>
+    <variables>
+        <name>recipientList</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
     <start>
         <locationX>56</locationX>
         <locationY>0</locationY>
@@ -84,13 +92,13 @@
         <inputParameters>
             <name>emailAddresses</name>
             <value>
-                <elementReference>$Record.Applicant__r.Email</elementReference>
+                <stringValue>{!$Record.Applicant__r.PersonEmail}</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
             <name>emailSubject</name>
             <value>
-                <stringValue>🎉 Congratulations! Your Loan has been Sanctioned</stringValue>
+                <stringValue>Congratulations! Your Loan has been Sanctioned</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -117,7 +125,7 @@ LendSphere 360 Team</stringValue>
         <inputParameters>
             <name>emailAddresses</name>
             <value>
-                <elementReference>$Record.Applicant__r.Email</elementReference>
+                <stringValue>{!$Record.Applicant__r.PersonEmail}</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -140,5 +148,4 @@ LendSphere 360 Team</stringValue>
             </value>
         </inputParameters>
     </actionCalls>
-    <status>Active</status>
 </Flow>

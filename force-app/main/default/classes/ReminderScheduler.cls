@@ -11,7 +11,6 @@
 public with sharing class ReminderScheduler implements Schedulable {
 
     private static final String MODULE     = 'ReminderScheduler';
-    private static final String CLASS_NAME = 'ReminderScheduler';
 
     // ─── Schedulable Interface ───────────────────────────────────────────────────
     public void execute(SchedulableContext sc) {
@@ -21,8 +20,6 @@ public with sharing class ReminderScheduler implements Schedulable {
         List<EMI_Schedule__c> upcomingEMIs = [
             SELECT Id, Loan_Application__c,
                    Loan_Application__r.Applicant__c,
-                   Loan_Application__r.Applicant__r.Name,
-                   Loan_Application__r.Applicant__r.PersonEmail,
                    EMI_Amount__c, Due_Date__c, EMI_Number__c, Outstanding_Balance__c
             FROM   EMI_Schedule__c
             WHERE  Due_Date__c = :reminderDate
@@ -35,18 +32,43 @@ public with sharing class ReminderScheduler implements Schedulable {
             return;
         }
 
+        // Collect Account IDs to query their primary Contacts for email
+        Set<Id> accountIds = new Set<Id>();
+        for (EMI_Schedule__c emi : upcomingEMIs) {
+            if (emi.Loan_Application__r.Applicant__c != null) {
+                accountIds.add(emi.Loan_Application__r.Applicant__c);
+            }
+        }
+
+        // Build accountId → primary Contact map
+        Map<Id, Contact> contactByAccount = new Map<Id, Contact>();
+        for (Contact c : [
+            SELECT Id, AccountId, Email, Name
+            FROM   Contact
+            WHERE  AccountId IN :accountIds
+            AND    Email     != null
+            ORDER BY CreatedDate ASC
+        ]) {
+            // Keep only the first contact per account
+            if (!contactByAccount.containsKey(c.AccountId)) {
+                contactByAccount.put(c.AccountId, c);
+            }
+        }
+
         List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
 
         for (EMI_Schedule__c emi : upcomingEMIs) {
-            String recipientEmail = emi.Loan_Application__r.Applicant__r.PersonEmail;
-            String recipientName  = emi.Loan_Application__r.Applicant__r.Name;
+            Id accountId = emi.Loan_Application__r.Applicant__c;
+            Contact applicantContact = contactByAccount.get(accountId);
 
-            if (String.isBlank(recipientEmail)) { continue; }
+            if (applicantContact == null || String.isBlank(applicantContact.Email)) {
+                continue;
+            }
 
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-            mail.setToAddresses(new List<String>{ recipientEmail });
+            mail.setToAddresses(new List<String>{ applicantContact.Email });
             mail.setSubject('EMI Payment Reminder — Due on ' + emi.Due_Date__c.format());
-            mail.setPlainTextBody(buildEmailBody(emi, recipientName));
+            mail.setPlainTextBody(buildEmailBody(emi, applicantContact.Name));
             mail.setSaveAsActivity(false);
             emails.add(mail);
         }
