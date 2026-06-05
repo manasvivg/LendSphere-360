@@ -14,6 +14,8 @@
         <members>Application_Log__c</members>
         <members>Loan_Config__mdt</members>
         <!-- Phase 4: Platform Event SObject definitions -->
+        <members>Application_Submitted__e</members>
+        <members>KYC_Completed__e</members>
         <members>Credit_Assessment_Completed__e</members>
         <members>Mandate_Activated__e</members>
         <members>Loan_Disbursed__e</members>
@@ -228,13 +230,8 @@
         <members>LendSphere_Customer_Portal</members>
         <name>PermissionSet</name>
     </types>
-    <types>
-        <!-- Phase 4: Platform Event Channels (Pub/Sub API) -->
-        <members>Application_Submitted__e</members>
-        <members>KYC_Completed__e</members>
-        <members>Credit_Assessment_Completed__e</members>
-        <name>PlatformEventChannel</name>
-    </types>
+    <!-- PlatformEventChannel block removed: all channels caused Invalid channel name errors.
+         Platform Events are deployed as CustomObject SObjects — no separate channel metadata needed. -->
     <types>
         <!-- Phase 4: LWC Components -->
         <members>loanApplicationWizard</members>

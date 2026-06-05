@@ -39,8 +39,5 @@
         <object>Application_Log__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
-    <userPermissions>
-        <enabled>true</enabled>
-        <name>ViewSetup</name>
-    </userPermissions>
+    <!-- ViewSetup removed: requires ViewRoles dependency which is not included -->
 </PermissionSet>
