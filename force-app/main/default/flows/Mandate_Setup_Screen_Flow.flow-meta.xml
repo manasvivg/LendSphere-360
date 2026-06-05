@@ -47,31 +47,6 @@
         <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>
-    <screens>
-        <name>Step1_Select_Mandate_Type</name>
-        <label>Step 1 - Choose Mandate Type</label>
-        <locationX>176</locationX>
-        <locationY>134</locationY>
-        <allowBack>false</allowBack>
-        <allowFinish>false</allowFinish>
-        <allowPause>false</allowPause>
-        <connector>
-            <targetReference>Check_Mandate_Type</targetReference>
-        </connector>
-        <fields>
-            <name>Mandate_Type_Choice</name>
-            <choiceReferences>UPI_Choice</choiceReferences>
-            <choiceReferences>eNACH_Choice</choiceReferences>
-            <dataType>String</dataType>
-            <fieldType>RadioButtons</fieldType>
-            <isRequired>true</isRequired>
-            <label>Select Repayment Method</label>
-            <outputMappings>
-                <assignToReference>mandateType</assignToReference>
-                <name>value</name>
-            </outputMappings>
-        </fields>
-    </screens>
     <choices>
         <name>UPI_Choice</name>
         <choiceText>UPI AutoPay (Recommended)</choiceText>
@@ -88,6 +63,31 @@
             <stringValue>eNACH</stringValue>
         </value>
     </choices>
+    <screens>
+        <name>Step1_Select_Mandate_Type</name>
+        <label>Step 1 - Choose Mandate Type</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Check_Mandate_Type</targetReference>
+        </connector>
+        <fields>
+            <name>Mandate_Type_Choice</name>
+            <choiceReferences>UPI_Choice</choiceReferences>
+            <choiceReferences>eNACH_Choice</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Select Repayment Method</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>true</isRequired>
+            <outputMappings>
+                <assignToReference>mandateType</assignToReference>
+                <name>value</name>
+            </outputMappings>
+        </fields>
+    </screens>
     <decisions>
         <name>Check_Mandate_Type</name>
         <label>UPI or eNACH?</label>
@@ -127,9 +127,9 @@
         <fields>
             <name>VPA_Input</name>
             <dataType>String</dataType>
+            <fieldText>UPI ID (VPA)</fieldText>
             <fieldType>InputField</fieldType>
             <isRequired>true</isRequired>
-            <label>UPI ID (VPA)</label>
             <outputMappings>
                 <assignToReference>vpaAddress</assignToReference>
                 <name>value</name>
@@ -150,9 +150,9 @@
         <fields>
             <name>Bank_Account_Input</name>
             <dataType>String</dataType>
+            <fieldText>Bank Account Number</fieldText>
             <fieldType>InputField</fieldType>
             <isRequired>true</isRequired>
-            <label>Bank Account Number</label>
             <outputMappings>
                 <assignToReference>bankAccount</assignToReference>
                 <name>value</name>
@@ -161,9 +161,9 @@
         <fields>
             <name>IFSC_Input</name>
             <dataType>String</dataType>
+            <fieldText>IFSC Code</fieldText>
             <fieldType>InputField</fieldType>
             <isRequired>true</isRequired>
-            <label>IFSC Code</label>
             <outputMappings>
                 <assignToReference>ifscCode</assignToReference>
                 <name>value</name>
@@ -172,7 +172,7 @@
     </screens>
     <screens>
         <name>Step3_Confirmation</name>
-        <label>Step 3 - Confirm &amp; Submit</label>
+        <label>Step 3 - Confirm and Submit</label>
         <locationX>176</locationX>
         <locationY>566</locationY>
         <allowBack>true</allowBack>
@@ -184,7 +184,7 @@
         <fields>
             <name>Confirmation_Display</name>
             <fieldType>DisplayText</fieldType>
-            <fieldText>You are setting up {!mandateType} mandate for automatic EMI deduction.
+            <fieldText>You are setting up a mandate for automatic EMI deduction.
 Click Finish to authorize and submit your mandate request.</fieldText>
         </fields>
     </screens>
@@ -231,5 +231,12 @@ Click Finish to authorize and submit your mandate request.</fieldText>
         </inputAssignments>
         <object>Mandate__c</object>
     </recordCreates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Step1_Select_Mandate_Type</targetReference>
+        </connector>
+    </start>
     <status>Active</status>
 </Flow>

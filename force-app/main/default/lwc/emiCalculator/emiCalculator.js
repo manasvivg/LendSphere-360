@@ -6,7 +6,7 @@ export default class EmiCalculator extends NavigationMixin(LightningElement) {
     @api defaultAmount    = 1000000;
     @api defaultRate      = 10.5;
     @api defaultTenure    = 120;
-    @api showApplyButton  = true;
+    @api showApplyButton  = false;
 
     @track loanAmount   = this.defaultAmount;
     @track interestRate = this.defaultRate;

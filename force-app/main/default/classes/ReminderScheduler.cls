@@ -22,7 +22,7 @@ public with sharing class ReminderScheduler implements Schedulable {
             SELECT Id, Loan_Application__c,
                    Loan_Application__r.Applicant__c,
                    Loan_Application__r.Applicant__r.Name,
-                   Loan_Application__r.Applicant__r.Email,
+                   Loan_Application__r.Applicant__r.PersonEmail,
                    EMI_Amount__c, Due_Date__c, EMI_Number__c, Outstanding_Balance__c
             FROM   EMI_Schedule__c
             WHERE  Due_Date__c = :reminderDate
@@ -38,7 +38,7 @@ public with sharing class ReminderScheduler implements Schedulable {
         List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
 
         for (EMI_Schedule__c emi : upcomingEMIs) {
-            String recipientEmail = emi.Loan_Application__r.Applicant__r.Email;
+            String recipientEmail = emi.Loan_Application__r.Applicant__r.PersonEmail;
             String recipientName  = emi.Loan_Application__r.Applicant__r.Name;
 
             if (String.isBlank(recipientEmail)) { continue; }

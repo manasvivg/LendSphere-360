@@ -13,8 +13,6 @@
                 <object>Loan_Application__c</object>
             </objects>
         </targetConfig>
-        <targetConfig targets="lightningCommunity__Page">
-        </targetConfig>
     </targetConfigs>
     <description>Reusable drag-and-drop document upload component with file validation, progress tracking, and existing document listing.</description>
 </LightningComponentBundle>

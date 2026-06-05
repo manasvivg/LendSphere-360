@@ -145,8 +145,8 @@ public with sharing class KYCCallout {
         } catch (Exception ex) {
             CalloutLogger.logException(ex, MODULE, CLASS_NAME, methodName,
                 String.valueOf(relatedRecordId));
-            ApplicationLogger.logError(MODULE, CLASS_NAME, methodName,
-                'KYC callout exception: ' + ex.getMessage(), relatedRecordId);
+            ApplicationLogger.log(ApplicationLogger.LEVEL_ERROR, MODULE, methodName,
+                'KYC callout exception: ' + ex.getMessage(), String.valueOf(relatedRecordId));
         }
         return res;
     }
