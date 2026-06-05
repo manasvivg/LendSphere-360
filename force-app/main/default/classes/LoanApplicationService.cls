@@ -180,5 +180,76 @@ public with sharing class LoanApplicationService {
         }
     }
 
+    // ───────────────────────────────────────────────────────────────────────────
+    // @AuraEnabled — LWC / Aura entry points
+    // ───────────────────────────────────────────────────────────────────────────
+
+    /**
+     * @description Returns all active loan products for the application wizard.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<Loan_Product__c> getActiveLoanProducts() {
+        return [
+            SELECT Id, Name, Product_Type__c, Min_Amount__c, Max_Amount__c,
+                   Base_Interest_Rate__c, Min_Tenure_Months__c, Max_Tenure_Months__c,
+                   Requires_Collateral__c, Description__c
+            FROM   Loan_Product__c
+            WHERE  Is_Active__c = true
+            ORDER  BY Product_Type__c, Name
+        ];
+    }
+
+    /**
+     * @description Creates a Loan Application from the customer portal wizard.
+     */
+    @AuraEnabled
+    public static Id createLoanApplicationFromPortal(
+        Id     applicantId,
+        Id     loanProductId,
+        Decimal loanAmount,
+        Integer tenureMonths
+    ) {
+        Loan_Application__c app = new Loan_Application__c(
+            Applicant__c    = applicantId,
+            Loan_Product__c = loanProductId,
+            Loan_Amount__c  = loanAmount,
+            Tenure_Months__c = tenureMonths,
+            Status__c       = STATUS_DRAFT
+        );
+        insert app;
+        return app.Id;
+    }
+
+    /**
+     * @description Returns dashboard data (loan applications) for the logged-in customer.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<Loan_Application__c> getCustomerDashboardData(Id accountId) {
+        return [
+            SELECT Id, Name, Status__c, Loan_Amount__c, EMI_Amount__c,
+                   Sanctioned_Amount__c, Interest_Rate__c, Tenure_Months__c,
+                   Application_Date__c, Sanction_Date__c,
+                   Loan_Product__r.Name, Loan_Product__r.Product_Type__c
+            FROM   Loan_Application__c
+            WHERE  Applicant__c = :accountId
+            ORDER  BY Application_Date__c DESC
+            LIMIT  50
+        ];
+    }
+
+    /**
+     * @description Returns documents for a given loan application.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<Document__c> getDocumentsByApplication(Id loanApplicationId) {
+        return [
+            SELECT Id, Name, Document_Type__c, Verification_Status__c,
+                   Upload_Date__c, Rejection_Remarks__c, Content_Document_Id__c
+            FROM   Document__c
+            WHERE  Loan_Application__c = :loanApplicationId
+            ORDER  BY Upload_Date__c DESC
+        ];
+    }
+
     private static final String LEVEL_INFO = ApplicationLogger.LEVEL_INFO;
 }

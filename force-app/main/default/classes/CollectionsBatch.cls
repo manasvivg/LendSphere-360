@@ -58,4 +58,13 @@ public class CollectionsBatch implements Database.Batchable<SObject>, Schedulabl
             'CollectionsBatch completed. Job ID: ' + bc.getJobId());
         ApplicationLogger.flush();
     }
+
+    /**
+     * @description AuraEnabled entry point for manual batch trigger from LWC.
+     * @return      AsyncApexJob Id
+     */
+    @AuraEnabled
+    public static Id executeNow() {
+        return Database.executeBatch(new CollectionsBatch(), 200);
+    }
 }

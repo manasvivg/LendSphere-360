@@ -126,4 +126,23 @@ public with sharing class PropertyValuationService {
         }
         return result;
     }
+
+    // ───────────────────────────────────────────────────────────────────────────
+    // @AuraEnabled — LWC / Aura entry points
+    // ───────────────────────────────────────────────────────────────────────────
+
+    /**
+     * @description Saves a property detail record from the valuation form LWC.
+     * @param propertyDetail  Serialised Property_Detail__c fields from the LWC
+     * @return                Saved record Id
+     */
+    @AuraEnabled
+    public static Id savePropertyDetail(Property_Detail__c propertyDetail) {
+        if (propertyDetail.Id == null) {
+            insert propertyDetail;
+        } else {
+            update propertyDetail;
+        }
+        return propertyDetail.Id;
+    }
 }

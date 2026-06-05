@@ -129,4 +129,29 @@ public with sharing class CreditService {
         else if (score >= 600) ca.Risk_Grade__c = 'D';
         else                   ca.Risk_Grade__c = 'E';
     }
+
+    // ───────────────────────────────────────────────────────────────────────────
+    // @AuraEnabled — LWC / Aura entry points
+    // ───────────────────────────────────────────────────────────────────────────
+
+    /**
+     * @description Records the credit analyst's decision on an assessment.
+     * @param assessmentId  Id of the Credit_Assessment__c record
+     * @param decision      'Approved' or 'Rejected'
+     * @param remarks       Analyst comments
+     */
+    @AuraEnabled
+    public static void submitAnalystDecision(
+        Id     assessmentId,
+        String decision,
+        String remarks
+    ) {
+        Credit_Assessment__c ca = new Credit_Assessment__c(
+            Id                = assessmentId,
+            Analyst_Decision__c = decision,
+            Analyst_Remarks__c  = remarks,
+            Reviewed_By__c      = UserInfo.getUserId()
+        );
+        update ca;
+    }
 }

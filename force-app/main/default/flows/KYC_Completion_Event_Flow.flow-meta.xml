@@ -12,6 +12,7 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <status>Active</status>
     <start>
         <locationX>56</locationX>
         <locationY>0</locationY>
@@ -30,31 +31,18 @@
             <targetReference>Publish_KYC_Completed_Event</targetReference>
         </connector>
     </start>
-    <actionCalls>
+    <!-- Use recordCreates (Create Records) to publish a Platform Event — correct approach at API 59 -->
+    <recordCreates>
         <name>Publish_KYC_Completed_Event</name>
         <label>Publish KYC Completed Event</label>
         <locationX>176</locationX>
         <locationY>134</locationY>
-        <actionName>KYC_Completed__e</actionName>
-        <actionType>eventCreation</actionType>
-        <inputParameters>
-            <name>Loan_Application_Id__c</name>
+        <inputAssignments>
+            <field>Loan_Application_Id__c</field>
             <value>
                 <elementReference>$Record.Loan_Application__c</elementReference>
             </value>
-        </inputParameters>
-        <inputParameters>
-            <name>KYC_Request_Id__c</name>
-            <value>
-                <elementReference>$Record.Id</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>Verified_Date__c</name>
-            <value>
-                <elementReference>$Record.Verified_Date__c</elementReference>
-            </value>
-        </inputParameters>
-    </actionCalls>
-    <status>Active</status>
+        </inputAssignments>
+        <object>KYC_Completed__e</object>
+    </recordCreates>
 </Flow>

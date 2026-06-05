@@ -141,4 +141,45 @@ public with sharing class CollectionsService {
         else if (dpd >= BUCKET_3_MIN && dpd <= BUCKET_3_MAX) return '61-90 DPD';
         else                                                  return '90+ DPD';
     }
+
+    // ───────────────────────────────────────────────────────────────────────────
+    // @AuraEnabled — LWC / Aura entry points
+    // ───────────────────────────────────────────────────────────────────────────
+
+    /**
+     * @description Returns collection cases with related EMI and loan data for the dashboard.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<Collection_Case__c> getCollectionDashboardData() {
+        return [
+            SELECT Id, Name, Loan_Application__c, Loan_Application__r.Name,
+                   DPD__c, Bucket__c, Overdue_Amount__c, Collection_Status__c,
+                   Assigned_To__c, Assigned_To__r.Name,
+                   Promise_To_Pay_Date__c, Last_Contact_Remarks__c,
+                   EMI_Schedule__c, EMI_Schedule__r.Due_Date__c
+            FROM   Collection_Case__c
+            WHERE  Collection_Status__c NOT IN ('Closed', 'Settled')
+            ORDER  BY DPD__c DESC NULLS LAST
+            LIMIT  200
+        ];
+    }
+
+    /**
+     * @description Updates a collection case with remarks and promise-to-pay date.
+     */
+    @AuraEnabled
+    public static void updateCollectionCase(
+        Id     caseId,
+        String remarks,
+        Date   promiseToPayDate,
+        String status
+    ) {
+        Collection_Case__c cc = new Collection_Case__c(
+            Id                   = caseId,
+            Last_Contact_Remarks__c = remarks,
+            Promise_To_Pay_Date__c  = promiseToPayDate,
+            Collection_Status__c    = status
+        );
+        update cc;
+    }
 }
