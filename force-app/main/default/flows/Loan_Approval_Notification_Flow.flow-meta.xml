@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>59.0</apiVersion>
-    <description>Record-triggered flow that sends email notifications when a Loan Application is Sanctioned or Rejected. Emails the record owner (loan officer).</description>
+    <description>Record-triggered flow that sends email notifications when a Loan Application is Sanctioned or Rejected. Queries the record owner's User record to obtain email address.</description>
     <environments>Default</environments>
     <interviewLabel>Loan Approval Notification Flow {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Loan Approval Notification Flow</label>
@@ -13,12 +13,13 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <status>Active</status>
-    <!-- Text templates resolve merge fields at runtime — the correct way to pass related-object fields to action params -->
-    <textTemplates>
-        <name>OwnerEmailAddress</name>
-        <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>{!$Record.Owner.Email}</text>
-    </textTemplates>
+    <variables>
+        <name>ownerEmail</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
     <textTemplates>
         <name>ApprovalEmailBody</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
@@ -51,14 +52,39 @@
             </value>
         </filters>
         <connector>
-            <targetReference>Check_Status</targetReference>
+            <targetReference>Get_Owner_User</targetReference>
         </connector>
     </start>
+    <!-- Step 1: Query the Owner User to get Email — $Record.Owner.Email is not traversable directly -->
+    <recordLookups>
+        <name>Get_Owner_User</name>
+        <label>Get Owner Email</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Status</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </filters>
+        <object>User</object>
+        <outputAssignments>
+            <assignToReference>ownerEmail</assignToReference>
+            <field>Email</field>
+        </outputAssignments>
+    </recordLookups>
+    <!-- Step 2: Branch on status -->
     <decisions>
         <name>Check_Status</name>
         <label>Is Sanctioned or Rejected?</label>
         <locationX>176</locationX>
-        <locationY>134</locationY>
+        <locationY>242</locationY>
         <defaultConnectorLabel>Other Status</defaultConnectorLabel>
         <rules>
             <name>Is_Sanctioned</name>
@@ -91,17 +117,18 @@
             <label>Is Rejected</label>
         </rules>
     </decisions>
+    <!-- Step 3: Send email using the queried ownerEmail variable -->
     <actionCalls>
         <name>Send_Approval_Email</name>
         <label>Send Approval Email</label>
         <locationX>56</locationX>
-        <locationY>278</locationY>
+        <locationY>386</locationY>
         <actionName>emailSimple</actionName>
         <actionType>emailSimple</actionType>
         <inputParameters>
             <name>emailAddresses</name>
             <value>
-                <elementReference>OwnerEmailAddress</elementReference>
+                <elementReference>ownerEmail</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -121,13 +148,13 @@
         <name>Send_Rejection_Email</name>
         <label>Send Rejection Email</label>
         <locationX>296</locationX>
-        <locationY>278</locationY>
+        <locationY>386</locationY>
         <actionName>emailSimple</actionName>
         <actionType>emailSimple</actionType>
         <inputParameters>
             <name>emailAddresses</name>
             <value>
-                <elementReference>OwnerEmailAddress</elementReference>
+                <elementReference>ownerEmail</elementReference>
             </value>
         </inputParameters>
         <inputParameters>

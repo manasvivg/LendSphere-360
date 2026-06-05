@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>59.0</apiVersion>
-    <description>Record-triggered flow that auto-creates and assigns Collection_Case__c records when a Loan Application transitions to a delinquent state. Assigns to the collections officer queue.</description>
+    <description>Record-triggered flow that auto-assigns Collection_Case__c records to the correct DPD bucket when a new case is created.</description>
     <environments>Default</environments>
     <interviewLabel>Collections Assignment Flow {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Collections Assignment Flow</label>
@@ -12,6 +12,7 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <status>Active</status>
     <start>
         <locationX>56</locationX>
         <locationY>0</locationY>
@@ -77,15 +78,23 @@
             <label>Bucket 3 (61-90 DPD)</label>
         </rules>
     </decisions>
+    <!-- recordUpdates: use filters+inputAssignments mode only — NO inputReference (mutually exclusive) -->
     <recordUpdates>
         <name>Set_Bucket_1</name>
         <label>Set Bucket 1</label>
         <locationX>56</locationX>
         <locationY>278</locationY>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
         <inputAssignments>
             <field>Bucket__c</field>
             <value>
-                <stringValue>1-30</stringValue>
+                <stringValue>1-30 DPD</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -95,17 +104,23 @@
             </value>
         </inputAssignments>
         <object>Collection_Case__c</object>
-        <inputReference>$Record.Id</inputReference>
     </recordUpdates>
     <recordUpdates>
         <name>Set_Bucket_2</name>
         <label>Set Bucket 2</label>
         <locationX>176</locationX>
         <locationY>278</locationY>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
         <inputAssignments>
             <field>Bucket__c</field>
             <value>
-                <stringValue>31-60</stringValue>
+                <stringValue>31-60 DPD</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -115,17 +130,23 @@
             </value>
         </inputAssignments>
         <object>Collection_Case__c</object>
-        <inputReference>$Record.Id</inputReference>
     </recordUpdates>
     <recordUpdates>
         <name>Set_Bucket_3</name>
         <label>Set Bucket 3</label>
         <locationX>296</locationX>
         <locationY>278</locationY>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
         <inputAssignments>
             <field>Bucket__c</field>
             <value>
-                <stringValue>61-90</stringValue>
+                <stringValue>61-90 DPD</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -135,17 +156,23 @@
             </value>
         </inputAssignments>
         <object>Collection_Case__c</object>
-        <inputReference>$Record.Id</inputReference>
     </recordUpdates>
     <recordUpdates>
         <name>Assign_NPA_Queue</name>
         <label>Set NPA Bucket</label>
         <locationX>416</locationX>
         <locationY>278</locationY>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
         <inputAssignments>
             <field>Bucket__c</field>
             <value>
-                <stringValue>NPA</stringValue>
+                <stringValue>90+ DPD</stringValue>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -155,7 +182,5 @@
             </value>
         </inputAssignments>
         <object>Collection_Case__c</object>
-        <inputReference>$Record.Id</inputReference>
     </recordUpdates>
-    <status>Active</status>
 </Flow>
